@@ -1,0 +1,12 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_not-found/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__1z03e0j._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_esm_build_templates_app-page_17vog42.js")
+R.c("server/chunks/ssr/[root-of-the-server]__15ilmtg._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__06ch9oc._.js")
+R.c("server/chunks/ssr/Desktop_GITHUB_careerflow_client_src_0ybr_a7._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_1x9vi3h._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_forbidden_1nxg8ao.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_unauthorized_16g5nmf.js")
+R.c("server/chunks/ssr/1ofz_careerflow_client__next-internal_server_app__not-found_page_actions_0aly2b0.js")
+R.m(69915)
+module.exports=R.m(69915).exports

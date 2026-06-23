@@ -1,0 +1,17 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/applications/page": "app/applications/page.js",
+  "/cover-letter/page": "app/cover-letter/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/email-generator/page": "app/email-generator/page.js",
+  "/interview-prep/page": "app/interview-prep/page.js",
+  "/job-matcher/page": "app/job-matcher/page.js",
+  "/kanban/page": "app/kanban/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/profile/page": "app/profile/page.js",
+  "/register/page": "app/register/page.js",
+  "/resume-analyzer/page": "app/resume-analyzer/page.js",
+  "/settings/page": "app/settings/page.js"
+}

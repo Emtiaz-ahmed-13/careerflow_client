@@ -1,0 +1,17 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/applications/page": "/applications",
+  "/cover-letter/page": "/cover-letter",
+  "/dashboard/page": "/dashboard",
+  "/email-generator/page": "/email-generator",
+  "/interview-prep/page": "/interview-prep",
+  "/job-matcher/page": "/job-matcher",
+  "/kanban/page": "/kanban",
+  "/login/page": "/login",
+  "/page": "/",
+  "/profile/page": "/profile",
+  "/register/page": "/register",
+  "/resume-analyzer/page": "/resume-analyzer",
+  "/settings/page": "/settings"
+}

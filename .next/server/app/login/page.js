@@ -1,0 +1,13 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/login/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__1dbqlfk._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_esm_build_templates_app-page_1qxgxmi.js")
+R.c("server/chunks/ssr/[root-of-the-server]__15ilmtg._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__06ch9oc._.js")
+R.c("server/chunks/ssr/Desktop_GITHUB_careerflow_client_src_0ybr_a7._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_1x9vi3h._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_forbidden_1nxg8ao.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_unauthorized_16g5nmf.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_global-error_02fx0iz.js")
+R.c("server/chunks/ssr/0im4_GITHUB_careerflow_client__next-internal_server_app_login_page_actions_1o7avgw.js")
+R.m(75707)
+module.exports=R.m(75707).exports

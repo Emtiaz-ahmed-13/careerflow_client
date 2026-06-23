@@ -1,0 +1,13 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/resume-analyzer/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__12rg3h3._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_esm_build_templates_app-page_11ncfj3.js")
+R.c("server/chunks/ssr/[root-of-the-server]__15ilmtg._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__06ch9oc._.js")
+R.c("server/chunks/ssr/Desktop_GITHUB_careerflow_client_src_0ybr_a7._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_1x9vi3h._.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_forbidden_1nxg8ao.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_unauthorized_16g5nmf.js")
+R.c("server/chunks/ssr/0o7h_next_dist_client_components_builtin_global-error_02fx0iz.js")
+R.c("server/chunks/ssr/0_9n_client__next-internal_server_app_resume-analyzer_page_actions_1f0sdmz.js")
+R.m(38455)
+module.exports=R.m(38455).exports

@@ -1,0 +1,115 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f3f3f3;
+  --color-foreground: #0a0a0a;
+  --color-border: #000000;
+  --color-card: #ffffff;
+  --color-cyan: #22d3ee;
+  --color-lime: #a3e635;
+  --color-yellow: #fde047;
+  --color-pink: #fb7185;
+  --color-orange: #fb923c;
+  --color-muted: #737373;
+  --radius: 4px;
+  --shadow-neo: 4px 4px 0 0 #000;
+  --shadow-neo-sm: 3px 3px 0 0 #000;
+  --shadow-neo-lg: 6px 6px 0 0 #000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-foreground);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+
+.neo-border {
+  border: 3px solid #000;
+}
+
+.neo-shadow {
+  box-shadow: var(--shadow-neo);
+}
+
+.neo-shadow-sm {
+  box-shadow: var(--shadow-neo-sm);
+}
+
+.neo-shadow-lg {
+  box-shadow: var(--shadow-neo-lg);
+}
+
+.neo-card {
+  border: 3px solid #000;
+  background: #fff;
+  box-shadow: var(--shadow-neo);
+  border-radius: var(--radius);
+}
+
+.neo-btn {
+  border: 3px solid #000;
+  box-shadow: var(--shadow-neo-sm);
+  border-radius: var(--radius);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 #000;
+}
+
+.neo-btn-lime { background: var(--color-lime); }
+.neo-btn-yellow { background: var(--color-yellow); }
+.neo-btn-pink { background: var(--color-pink); }
+.neo-btn-white { background: #fff; }
+.neo-btn-cyan { background: var(--color-cyan); }
+
+.neo-input {
+  border: 3px solid #000;
+  background: #fff;
+  box-shadow: var(--shadow-neo-sm);
+  border-radius: var(--radius);
+}
+
+.neo-input:focus {
+  outline: none;
+  box-shadow: var(--shadow-neo);
+}
+
+.neo-tag-lime {
+  background: var(--color-lime);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
+}
+
+.neo-tag-orange {
+  background: var(--color-orange);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
+}
+
+.neo-tag-yellow {
+  background: var(--color-yellow);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
+}
+
+.neo-tag-pink {
+  background: var(--color-pink);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
+}
+
+.neo-heading {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}

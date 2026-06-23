@@ -1,0 +1,3 @@
+module.exports=[49258,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(39216);a.n(d("[project]/Desktop/GITHUB/careerflow/client/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},67483,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(39216);a.n(d("[project]/Desktop/GITHUB/careerflow/client/node_modules/next/dist/client/components/builtin/global-error.js"))},65600,a=>{"use strict";a.i(49258);var b=a.i(67483);a.n(b)},5262,a=>{a.n(a.i(65600))}];
+
+//# sourceMappingURL=0o7h_next_dist_client_components_builtin_global-error_02fx0iz.js.map

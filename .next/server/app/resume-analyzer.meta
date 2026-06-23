@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/resume-analyzer/layout,_N_T_/resume-analyzer/page,_N_T_/resume-analyzer"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/resume-analyzer/__PAGE__",
+    "/resume-analyzer",
+    "/_index",
+    "/_head"
+  ]
+}
