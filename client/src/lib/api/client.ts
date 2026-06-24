@@ -1,5 +1,22 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
+function apiErrorMessage(res: Response, body: { message?: string | string[] }) {
+  const raw = body.message ?? res.statusText ?? "Request failed";
+  return Array.isArray(raw) ? raw.join(", ") : String(raw);
+}
+
+async function readApiError(res: Response) {
+  try {
+    const body = await res.json();
+    return apiErrorMessage(res, body);
+  } catch {
+    if (res.status === 0 || res.type === "opaque") {
+      return "Cannot reach API — check NEXT_PUBLIC_API_URL on Vercel client env";
+    }
+    return res.statusText || "Request failed";
+  }
+}
+
 type Tokens = { accessToken: string; refreshToken: string };
 
 function getTokens(): Tokens | null {
@@ -45,21 +62,31 @@ export async function api<T>(
 
   if (tokens?.accessToken) headers.Authorization = `Bearer ${tokens.accessToken}`;
 
-  let res = await fetch(`${API_URL}${path}`, { ...options, headers: { ...headers, ...(options.headers as Record<string, string>) } });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, { ...options, headers: { ...headers, ...(options.headers as Record<string, string>) } });
+  } catch {
+    const hint =
+      typeof window !== "undefined" && window.location.hostname !== "localhost" && API_URL.includes("localhost")
+        ? "API URL not set — add NEXT_PUBLIC_API_URL on Vercel and redeploy client"
+        : "Cannot reach server — check API URL and CORS on Vercel";
+    throw new Error(hint);
+  }
 
   if (res.status === 401 && tokens?.refreshToken) {
     const newToken = await refreshAccessToken();
     if (newToken) {
       headers.Authorization = `Bearer ${newToken}`;
-      res = await fetch(`${API_URL}${path}`, { ...options, headers: { ...headers, ...(options.headers as Record<string, string>) } });
+      try {
+        res = await fetch(`${API_URL}${path}`, { ...options, headers: { ...headers, ...(options.headers as Record<string, string>) } });
+      } catch {
+        throw new Error("Cannot reach server — check API URL and CORS on Vercel");
+      }
     }
   }
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: res.statusText }));
-    const raw = err.message ?? res.statusText ?? "Request failed";
-    const message = Array.isArray(raw) ? raw.join(", ") : String(raw);
-    throw new Error(message);
+    throw new Error(await readApiError(res));
   }
 
   return res.json();
@@ -88,7 +115,7 @@ export async function uploadFile(path: string, file: File, extra: Record<string,
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }));
-    const msg = Array.isArray(err.message) ? err.message.join(", ") : (err.message ?? "Upload failed");
+    const msg = apiErrorMessage(res, err);
     throw new Error(msg);
   }
   return res.json();

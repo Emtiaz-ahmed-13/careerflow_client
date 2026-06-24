@@ -7,8 +7,25 @@ export function configureApp(app: INestApplication) {
   app.setGlobalPrefix('api/v1', {
     exclude: [{ path: '', method: RequestMethod.GET }],
   });
+  const configuredOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost:3000'],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      try {
+        const host = new URL(origin).hostname;
+        const allowed =
+          configuredOrigins.includes(origin) ||
+          host === 'localhost' ||
+          host.endsWith('.vercel.app');
+        return callback(null, allowed);
+      } catch {
+        return callback(null, false);
+      }
+    },
     credentials: true,
   });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
