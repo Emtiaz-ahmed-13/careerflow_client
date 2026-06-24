@@ -6,7 +6,7 @@ Next.js frontend for **CareerFlow** — a neo-brutalist job hunt dashboard with 
 
 | | URL |
 |---|-----|
-| **App** | https://client-emtiaz-ahmed-13s-projects.vercel.app |
+| **App** | https://client-mocha-five-q1k2xjicnj.vercel.app |
 
 ## What it does
 
