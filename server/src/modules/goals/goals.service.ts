@@ -262,9 +262,8 @@ export class GoalsService {
       parsed.companyName !== 'Unknown Company' ? parsed.companyName : 'Unknown Company';
     const position = parsed.position !== 'Unknown Position' ? parsed.position : 'Unknown Position';
 
-    const [match, coverLetter, email] = await Promise.all([
+    const [match, email] = await Promise.all([
       this.ai.matchResumePreview(userId, resume.id, jobDescriptionText),
-      this.ai.generateCoverLetterContent(userId, resume.id, jobDescriptionText),
       this.ai.generateEmailContent(userId, jobDescriptionText, companyName, position),
     ]);
 
@@ -280,7 +279,6 @@ export class GoalsService {
         recruiterEmail: parsed.recruiterEmail,
       },
       match,
-      coverLetter: { content: coverLetter.content },
       email: { subject: email.subject, content: email.content },
       lowMatch: match.matchScore < LOW_MATCH_THRESHOLD,
       matchThreshold: LOW_MATCH_THRESHOLD,
@@ -325,7 +323,7 @@ export class GoalsService {
       status: ApplicationStatus.Applied,
     });
 
-    const [matchRecord, coverLetter, emailRecord, dailyGoal, reminder] = await Promise.all([
+    const [matchRecord, emailRecord, dailyGoal, reminder] = await Promise.all([
       dto.matchScore != null
         ? this.prisma.resumeAnalysis.create({
             data: {
@@ -341,16 +339,6 @@ export class GoalsService {
             },
           })
         : this.ai.matchResume(userId, resume.id, dto.jobDescriptionText, application.id),
-      this.prisma.coverLetter.create({
-        data: {
-          userId,
-          applicationId: application.id,
-          resumeDocumentId: resume.id,
-          jobDescriptionText: dto.jobDescriptionText,
-          content: dto.coverLetterContent,
-          tone: 'Custom',
-        },
-      }),
       this.prisma.applicationEmail.create({
         data: {
           userId,
@@ -397,7 +385,6 @@ export class GoalsService {
     return {
       application,
       match: matchRecord,
-      coverLetter,
       email: emailRecord,
       dailyGoal,
       reminder,
@@ -423,7 +410,6 @@ export class GoalsService {
       position: dto.position,
       jobUrl: dto.jobUrl ?? preview.jobUrl ?? undefined,
       recruiterEmail: dto.recruiterEmail,
-      coverLetterContent: preview.coverLetter.content,
       emailSubject: preview.email.subject,
       emailContent: preview.email.content,
       matchScore: preview.match.matchScore,

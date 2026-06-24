@@ -53,7 +53,7 @@ export default function ApplicationsPage() {
     <DashboardLayout>
       <PageHeader
         title="Applications"
-        subtitle="Track every job — open any apply for letter, email & timeline"
+        subtitle="Track every job — open any apply for email & timeline"
         action={
           <Button variant={showForm ? "pink" : "lime"} onClick={() => setShowForm(!showForm)}>
             {showForm ? "Cancel" : "+ New Application"}
@@ -85,7 +85,6 @@ export default function ApplicationsPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {apps.map((app) => {
-          const hasLetter = !!app.coverLetters?.[0];
           const hasEmail = !!app.applicationEmails?.[0];
           const matchScore = app.resumeAnalyses?.[0]?.matchScore;
 
@@ -105,7 +104,6 @@ export default function ApplicationsPage() {
                 <Tag variant="orange">{app.companyName}</Tag>
                 <StatusTag status={STATUS_LABELS[app.status]} />
                 {matchScore != null && <Tag variant="yellow">{matchScore}% match</Tag>}
-                {hasLetter && <Tag variant="lime">Letter</Tag>}
                 {hasEmail && <Tag variant="yellow">Email</Tag>}
               </div>
               <div className="mt-auto flex flex-wrap gap-2 pt-5">

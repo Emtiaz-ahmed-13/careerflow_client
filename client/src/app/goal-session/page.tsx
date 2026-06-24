@@ -40,7 +40,6 @@ export default function GoalSessionPage() {
   const [confirming, setConfirming] = useState(false);
   const [savingCommitment, setSavingCommitment] = useState(false);
   const [preview, setPreview] = useState<GoalSessionPreview | null>(null);
-  const [coverLetter, setCoverLetter] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailContent, setEmailContent] = useState("");
   const [result, setResult] = useState<GoalSessionResult | null>(null);
@@ -169,7 +168,6 @@ export default function GoalSessionPage() {
       setJobDescription(data.jobDescriptionText);
       if (data.jobUrl) setJobUrl(data.jobUrl);
       setTrack(data.resumeTrack);
-      setCoverLetter(data.coverLetter?.content ?? "");
       setEmailSubject(data.email?.subject ?? "");
       setEmailContent(data.email?.content ?? "");
       if (data.parsed.recruiterEmail) setRecruiterEmail(data.parsed.recruiterEmail);
@@ -203,7 +201,6 @@ export default function GoalSessionPage() {
           position: preview.parsed.position,
           jobUrl: preview.jobUrl ?? undefined,
           recruiterEmail: recruiterEmail || undefined,
-          coverLetterContent: coverLetter,
           emailSubject,
           emailContent,
           matchScore: preview.match.matchScore,
@@ -237,7 +234,7 @@ export default function GoalSessionPage() {
 
   return (
     <DashboardLayout>
-      <PageHeader title="Goal Session" subtitle="Your daily apply hub — paste job → AI match → letter → email → log" />
+      <PageHeader title="Goal Session" subtitle="Your daily apply hub — paste job → AI match → email → log" />
 
       {importingExtension && (
         <p className="neo-border mb-4 bg-[var(--color-cyan)] p-3 text-sm font-bold">
@@ -304,15 +301,15 @@ export default function GoalSessionPage() {
 
         <Button variant="lime" className="w-full" onClick={runPreview} disabled={previewing || confirming}>
           <Zap className="h-4 w-4" />
-          {previewing ? "AI analyzing..." : "Preview Session (match + letter + email)"}
+          {previewing ? "AI analyzing..." : "Preview Session (match + email)"}
         </Button>
       </section>
 
       {preview && !result && (
         <section id="goal-session-preview" className="space-y-4 border-t-[3px] border-black pt-8">
           <div>
-            <h2 className="neo-heading text-lg">Step 2 — Edit cover letter &amp; email</h2>
-            <p className="mt-1 text-sm font-medium text-neutral-600">Text box e click kore likha change koro, tarpor Confirm Apply</p>
+            <h2 className="neo-heading text-lg">Step 2 — Edit email &amp; confirm</h2>
+            <p className="mt-1 text-sm font-medium text-neutral-600">Email edit koro, tarpor Confirm Apply</p>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -343,21 +340,6 @@ export default function GoalSessionPage() {
               )}
             </Card>
           </div>
-
-          <Card className="bg-white">
-            <div className="mb-2 flex items-center justify-between">
-              <Label>Cover Letter — edit before apply</Label>
-              <Button variant="yellow" size="sm" onClick={() => { copyToClipboard(coverLetter); toast.success("Copied!"); }}>
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-            <Textarea
-              value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
-              className="min-h-[200px] bg-white text-sm"
-              placeholder="AI cover letter will appear here — click and edit..."
-            />
-          </Card>
 
           <Card className="bg-white">
             <div className="mb-2 flex items-center justify-between">

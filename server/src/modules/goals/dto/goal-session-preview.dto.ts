@@ -49,10 +49,10 @@ export class GoalSessionConfirmDto {
   @IsEmail()
   recruiterEmail?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  coverLetterContent: string;
+  coverLetterContent?: string;
 
   @ApiProperty()
   @IsString()
