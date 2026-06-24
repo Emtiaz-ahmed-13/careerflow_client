@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1").replace(/\/$/, "");
 
 function apiErrorMessage(res: Response, body: { message?: string | string[] }) {
   const raw = body.message ?? res.statusText ?? "Request failed";
