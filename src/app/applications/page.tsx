@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Trash2 } from "lucide-react";
+import { Calendar, Pencil, Trash2 } from "lucide-react";
 import { DashboardLayout, PageHeader } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea, Label, Card } from "@/components/ui/input";
 import { JobPastePanel } from "@/components/shared/job-paste-panel";
 import { StatusTag, Tag } from "@/components/shared/tag";
 import { api } from "@/lib/api/client";
+import { toast } from "@/lib/toast";
 import type { JobApplication } from "@/types";
 import { STATUS_LABELS } from "@/types";
 
@@ -33,19 +35,25 @@ export default function ApplicationsPage() {
       setShowForm(false);
       setForm({ companyName: "", position: "", jobUrl: "", salary: "", location: "", notes: "" });
       setJobDescription("");
+      toast.success("Application saved!");
     },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to save"),
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => api(`/applications/${id}`, { method: "DELETE" }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["applications"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["applications"] });
+      toast.success("Application deleted");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to delete"),
   });
 
   return (
     <DashboardLayout>
       <PageHeader
         title="Applications"
-        subtitle="Track every job you apply to"
+        subtitle="Track every job — open any apply for letter, email & timeline"
         action={
           <Button variant={showForm ? "pink" : "lime"} onClick={() => setShowForm(!showForm)}>
             {showForm ? "Cancel" : "+ New Application"}
@@ -76,39 +84,49 @@ export default function ApplicationsPage() {
       {isLoading && <p className="font-bold uppercase">Loading...</p>}
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {apps.map((app) => (
-          <Card key={app.id} className="flex flex-col bg-white">
-            <h3 className="neo-heading text-base leading-snug">{app.position}</h3>
-            <p className="mt-1 flex items-center gap-1 text-xs font-bold uppercase text-neutral-600">
-              <Calendar className="h-3.5 w-3.5" />
-              {new Date(app.createdAt).toLocaleDateString()}
-            </p>
-            <p className="mt-3 line-clamp-2 text-sm font-medium">
-              {app.notes || app.jobDescriptionText?.slice(0, 100) || "No description yet."}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Tag variant="orange">{app.companyName}</Tag>
-              <StatusTag status={STATUS_LABELS[app.status]} />
-              {app.location && <Tag variant="yellow">{app.location}</Tag>}
-            </div>
-            <div className="mt-auto flex gap-2 pt-5">
-              <Button variant="white" size="sm" className="flex-1" onClick={() => window.location.href = `/kanban`}>
-                View →
-              </Button>
-              <Button variant="yellow" size="sm" className="flex-1" onClick={() => setShowForm(true)}>
-                Edit
-              </Button>
-              <Button variant="pink" size="sm" onClick={() => remove.mutate(app.id)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </Card>
-        ))}
+        {apps.map((app) => {
+          const hasLetter = !!app.coverLetters?.[0];
+          const hasEmail = !!app.applicationEmails?.[0];
+          const matchScore = app.resumeAnalyses?.[0]?.matchScore;
+
+          return (
+            <Card key={app.id} className="flex flex-col bg-white">
+              <Link href={`/applications/${app.id}`} className="group">
+                <h3 className="neo-heading text-base leading-snug group-hover:underline">{app.position}</h3>
+              </Link>
+              <p className="mt-1 flex items-center gap-1 text-xs font-bold uppercase text-neutral-600">
+                <Calendar className="h-3.5 w-3.5" />
+                {new Date(app.createdAt).toLocaleDateString()}
+              </p>
+              <p className="mt-3 line-clamp-2 text-sm font-medium">
+                {app.notes || app.jobDescriptionText?.slice(0, 100) || "No description yet."}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Tag variant="orange">{app.companyName}</Tag>
+                <StatusTag status={STATUS_LABELS[app.status]} />
+                {matchScore != null && <Tag variant="yellow">{matchScore}% match</Tag>}
+                {hasLetter && <Tag variant="lime">Letter</Tag>}
+                {hasEmail && <Tag variant="yellow">Email</Tag>}
+              </div>
+              <div className="mt-auto flex flex-wrap gap-2 pt-5">
+                <Link href={`/applications/${app.id}`} className="flex-1">
+                  <Button variant="lime" size="sm" className="w-full">Open</Button>
+                </Link>
+                <Link href={`/applications/${app.id}?edit=1`}>
+                  <Button variant="yellow" size="sm"><Pencil className="h-4 w-4" /></Button>
+                </Link>
+                <Button variant="pink" size="sm" onClick={() => remove.mutate(app.id)}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </Card>
+          );
+        })}
       </div>
 
       {!isLoading && apps.length === 0 && (
         <Card className="mt-4 bg-[var(--color-yellow)] text-center">
-          <p className="font-black uppercase">No applications yet — hit + New Application!</p>
+          <p className="font-black uppercase">No applications yet — use Goal Session or + New Application!</p>
         </Card>
       )}
     </DashboardLayout>

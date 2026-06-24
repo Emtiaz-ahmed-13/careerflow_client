@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/input";
 import { JobPastePanel } from "@/components/shared/job-paste-panel";
 import { Tag } from "@/components/shared/tag";
 import { api } from "@/lib/api/client";
+import { toast } from "@/lib/toast";
 
 type Question = { question: string; tip: string; difficulty: string };
 
@@ -23,7 +24,7 @@ export default function InterviewPrepPage() {
   const [loading, setLoading] = useState(false);
 
   const generate = async () => {
-    if (!jobDescription.trim()) return alert("Paste job description");
+    if (!jobDescription.trim()) return toast.error("Paste job description");
     setLoading(true);
     try {
       const data = await api<{ questions: Question[] }>("/ai/interview/questions", {
@@ -31,8 +32,9 @@ export default function InterviewPrepPage() {
         body: JSON.stringify({ jobDescriptionText: jobDescription, category }),
       });
       setQuestions(data.questions);
+      toast.success("Interview questions generated!");
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed");
+      toast.error(e instanceof Error ? e.message : "Failed");
     } finally {
       setLoading(false);
     }

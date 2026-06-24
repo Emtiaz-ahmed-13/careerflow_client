@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout, PageHeader } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/input";
+import { Card, Textarea, Label } from "@/components/ui/input";
 import { Tag } from "@/components/shared/tag";
 import { api } from "@/lib/api/client";
+import { toast } from "@/lib/toast";
+import { useAuth } from "@/providers/auth-provider";
+import type { User } from "@/types";
 
 type Insights = {
   bestPerformingSkills: string[];
@@ -14,17 +17,59 @@ type Insights = {
   recommendations: string[];
 };
 
+const EMAIL_STYLE_EXAMPLE = `Example format:
+- Start: "Assalamu Alaikum bhaiya" or "Hi [Name]"
+- Tone: respectful, industry boro bhaiya style
+- Mention: 2 years experience, key skills
+- End: "Apnar consideration er jonno dhonnobad"
+- Sign off with name + phone + LinkedIn`;
+
+const COVER_LETTER_STYLE_EXAMPLE = `Example format:
+- Opening: direct, confident
+- Body: 2 paragraphs — why this company + why me
+- Mention specific projects from resume
+- Closing: eager to discuss, professional sign-off
+- Max 300 words, no generic fluff`;
+
 export default function SettingsPage() {
+  const { user, refreshUser } = useAuth();
   const [insights, setInsights] = useState<Insights | null>(null);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [emailStyle, setEmailStyle] = useState("");
+  const [coverLetterStyle, setCoverLetterStyle] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setEmailStyle(user.emailStyle ?? "");
+      setCoverLetterStyle(user.coverLetterStyle ?? "");
+    }
+  }, [user]);
+
+  const saveWritingStyle = async () => {
+    setSaving(true);
+    try {
+      await api<User>("/users/profile", {
+        method: "PATCH",
+        body: JSON.stringify({ emailStyle, coverLetterStyle }),
+      });
+      await refreshUser();
+      toast.success("Your writing style saved — AI will follow this format!");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const loadInsights = async () => {
     setLoading(true);
     try {
       const data = await api<Insights>("/ai/career-insights");
       setInsights(data);
+      toast.success("Career insights generated!");
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed");
+      toast.error(e instanceof Error ? e.message : "Failed");
     } finally {
       setLoading(false);
     }
@@ -32,13 +77,63 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <PageHeader title="Settings" subtitle="AI career insights from your application history" />
+      <PageHeader title="Settings" subtitle="Your AI writing style + career insights" />
+
+      <Card className="mb-8 max-w-3xl bg-[var(--color-lime)]">
+        <h2 className="neo-heading text-sm">Chrome Extension — Save LinkedIn Jobs</h2>
+        <p className="mt-2 text-sm font-medium">
+          One-click import from LinkedIn to Goal Session. Install the unpacked extension from the repo:
+        </p>
+        <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm font-bold">
+          <li>Chrome → <code className="neo-border bg-white px-1">chrome://extensions</code></li>
+          <li>Developer mode ON → Load unpacked</li>
+          <li>Select folder: <code className="neo-border bg-white px-1">careerflow/extension</code></li>
+          <li>Open LinkedIn job → click <strong>Save to CareerFlow</strong></li>
+        </ol>
+        <a
+          href="https://client-mocha-five-q1k2xjicnj.vercel.app/goal-session"
+          className="neo-btn neo-btn-lime mt-4 inline-block px-4 py-2 text-sm font-black"
+        >
+          Open Goal Session →
+        </a>
+      </Card>
+
+      <Card className="mb-8 max-w-3xl bg-[var(--color-cyan)]">
+        <h2 className="neo-heading text-sm">My Writing Style</h2>
+        <p className="mt-2 text-sm font-medium">
+          Tell AI exactly how you want emails &amp; cover letters written. Not generic — your format, your tone.
+        </p>
+
+        <div className="mt-6 space-y-4">
+          <div>
+            <Label>Email format &amp; tone</Label>
+            <p className="mt-1 text-xs text-neutral-600">{EMAIL_STYLE_EXAMPLE}</p>
+            <Textarea
+              value={emailStyle}
+              onChange={(e) => setEmailStyle(e.target.value)}
+              placeholder="Describe how you want application emails written..."
+              className="mt-2 min-h-[140px] bg-white text-sm"
+            />
+          </div>
+          <div>
+            <Label>Cover letter format &amp; tone</Label>
+            <p className="mt-1 text-xs text-neutral-600">{COVER_LETTER_STYLE_EXAMPLE}</p>
+            <Textarea
+              value={coverLetterStyle}
+              onChange={(e) => setCoverLetterStyle(e.target.value)}
+              placeholder="Describe your cover letter structure and tone..."
+              className="mt-2 min-h-[140px] bg-white text-sm"
+            />
+          </div>
+          <Button variant="lime" onClick={saveWritingStyle} disabled={saving}>
+            {saving ? "Saving..." : "Save My Style"}
+          </Button>
+        </div>
+      </Card>
 
       <Card className="max-w-2xl bg-[var(--color-yellow)]">
         <h2 className="neo-heading text-sm">AI Career Insights</h2>
-        <p className="mt-2 text-sm font-medium">
-          Analyze your application history for patterns and recommendations.
-        </p>
+        <p className="mt-2 text-sm font-medium">Analyze your application history for patterns.</p>
         <Button variant="lime" onClick={loadInsights} disabled={loading} className="mt-4">
           {loading ? "Analyzing..." : "Generate Insights"}
         </Button>

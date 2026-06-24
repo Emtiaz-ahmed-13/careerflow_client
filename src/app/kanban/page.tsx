@@ -10,6 +10,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 import { DashboardLayout, PageHeader } from "@/components/layout/sidebar";
 import { api } from "@/lib/api/client";
+import { toast } from "@/lib/toast";
 import type { ApplicationStatus, JobApplication } from "@/types";
 import { STATUS_COLUMNS, STATUS_LABELS } from "@/types";
 
@@ -74,7 +75,11 @@ export default function KanbanPage() {
   const updateStatus = useMutation({
     mutationFn: ({ id, status }: { id: string; status: ApplicationStatus }) =>
       api(`/applications/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["applications"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["applications"] });
+      toast.success("Status updated!");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to update status"),
   });
 
   const handleDragEnd = (event: DragEndEvent) => {

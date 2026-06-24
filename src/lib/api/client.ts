@@ -67,12 +67,27 @@ export const auth = { getTokens, setTokens, clearTokens };
 
 export async function uploadFile(path: string, file: File, extra: Record<string, string> = {}) {
   const tokens = getTokens();
-  const form = new FormData();
-  form.append("file", file);
-  Object.entries(extra).forEach(([k, v]) => form.append(k, v));
-  const headers: Record<string, string> = {};
-  if (tokens?.accessToken) headers.Authorization = `Bearer ${tokens.accessToken}`;
-  const res = await fetch(`${API_URL}${path}`, { method: "POST", headers, body: form });
-  if (!res.ok) throw new Error("Upload failed");
+
+  const doUpload = async (accessToken?: string) => {
+    const form = new FormData();
+    form.append("file", file);
+    Object.entries(extra).forEach(([k, v]) => form.append(k, v));
+    const headers: Record<string, string> = {};
+    if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+    return fetch(`${API_URL}${path}`, { method: "POST", headers, body: form });
+  };
+
+  let res = await doUpload(tokens?.accessToken);
+
+  if (res.status === 401 && tokens?.refreshToken) {
+    const newToken = await refreshAccessToken();
+    if (newToken) res = await doUpload(newToken);
+  }
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: res.statusText }));
+    const msg = Array.isArray(err.message) ? err.message.join(", ") : (err.message ?? "Upload failed");
+    throw new Error(msg);
+  }
   return res.json();
 }

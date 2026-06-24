@@ -8,6 +8,7 @@ import { DashboardLayout, PageHeader } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Card } from "@/components/ui/input";
 import { api, uploadFile } from "@/lib/api/client";
+import { toast } from "@/lib/toast";
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
@@ -28,9 +29,9 @@ export default function ProfilePage() {
     try {
       await api("/users/profile", { method: "PATCH", body: JSON.stringify(form) });
       await refreshUser();
-      alert("Profile saved!");
+      toast.success("Profile saved!");
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed");
+      toast.error(e instanceof Error ? e.message : "Failed");
     } finally {
       setSaving(false);
     }
@@ -43,8 +44,9 @@ export default function ProfilePage() {
     try {
       await uploadFile("/users/avatar", file);
       await refreshUser();
+      toast.success("Photo uploaded!");
     } catch {
-      alert("Upload failed");
+      toast.error("Upload failed");
     } finally {
       setUploading(false);
     }
