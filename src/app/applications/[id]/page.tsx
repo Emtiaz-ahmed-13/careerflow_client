@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowLeft, Calendar, Copy, FileText, Mail, Trash2, Pencil, Check, Clock,
+  ArrowLeft, Calendar, Copy, Mail, Trash2, Pencil, Check, Clock,
 } from "lucide-react";
 import { DashboardLayout, PageHeader } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,6 @@ function ApplicationDetailContent() {
     notes: "",
     jobDescriptionText: "",
     status: "Applied" as ApplicationStatus,
-    coverLetterContent: "",
     emailSubject: "",
     emailContent: "",
   });
@@ -55,7 +54,6 @@ function ApplicationDetailContent() {
         notes: app.notes ?? "",
         jobDescriptionText: app.jobDescriptionText ?? "",
         status: app.status,
-        coverLetterContent: app.coverLetters?.[0]?.content ?? "",
         emailSubject: app.applicationEmails?.[0]?.subject ?? "",
         emailContent: app.applicationEmails?.[0]?.content ?? "",
       });
@@ -75,7 +73,6 @@ function ApplicationDetailContent() {
           notes: form.notes || undefined,
           jobDescriptionText: form.jobDescriptionText || undefined,
           status: form.status,
-          coverLetterContent: form.coverLetterContent || undefined,
           emailSubject: form.emailSubject || undefined,
           emailContent: form.emailContent || undefined,
         }),
@@ -106,13 +103,11 @@ function ApplicationDetailContent() {
     );
   }
 
-  const letter = app.coverLetters?.[0];
   const email = app.applicationEmails?.[0];
   const match = app.resumeAnalyses?.[0];
 
   const timeline: { date: string; label: string; detail: string }[] = [
     { date: app.createdAt, label: "Applied", detail: `${app.position} @ ${app.companyName}` },
-    ...(letter?.createdAt ? [{ date: letter.createdAt, label: "Cover letter saved", detail: "From Goal Session" }] : []),
     ...(email?.createdAt ? [{ date: email.createdAt, label: "Email saved", detail: email.subject }] : []),
     ...(match?.createdAt ? [{ date: match.createdAt, label: "Match analyzed", detail: `${match.matchScore}% match` }] : []),
     ...(app.reminders?.map((r) => ({
@@ -182,16 +177,6 @@ function ApplicationDetailContent() {
           </div>
           <div><Label>Notes</Label><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="mt-2 bg-white" /></div>
           <div><Label>Job Description</Label><Textarea value={form.jobDescriptionText} onChange={(e) => setForm({ ...form, jobDescriptionText: e.target.value })} className="mt-2 min-h-[160px] bg-white font-mono text-sm" /></div>
-          {letter && (
-            <div>
-              <Label>Cover Letter</Label>
-              <Textarea
-                value={form.coverLetterContent}
-                onChange={(e) => setForm({ ...form, coverLetterContent: e.target.value })}
-                className="mt-2 min-h-[200px] bg-white text-sm"
-              />
-            </div>
-          )}
           {email && (
             <div className="space-y-3">
               <div>
@@ -219,24 +204,6 @@ function ApplicationDetailContent() {
       )}
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {letter && (
-          <Card className="bg-white">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="neo-heading flex items-center gap-2 text-sm"><FileText className="h-4 w-4" /> Cover Letter</h2>
-              <div className="flex gap-2">
-                <Button variant="yellow" size="sm" onClick={() => setEditing(true)}>
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button variant="yellow" size="sm" onClick={() => { copyToClipboard(letter.content); toast.success("Copied!"); }}>
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            <div className="neo-border max-h-64 overflow-y-auto bg-white p-4 text-sm whitespace-pre-wrap">{letter.content}</div>
-            <p className="mt-2 text-xs font-medium text-neutral-600">Edit korar jonno pencil icon ba top-right Edit click koro</p>
-          </Card>
-        )}
-
         {email && (
           <Card className="bg-white">
             <div className="mb-3 flex items-center justify-between">

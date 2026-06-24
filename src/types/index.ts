@@ -48,7 +48,6 @@ export type GoalSessionPreview = {
   suggestedTrack: { track: ResumeTrack; reason: string };
   parsed: ParsedJobDetails;
   match: { matchScore: number; strongSkills: string[]; missingSkills: string[] };
-  coverLetter: { content: string };
   email: { subject: string; content: string };
   lowMatch: boolean;
   matchThreshold: number;

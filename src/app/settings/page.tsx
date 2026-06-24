@@ -24,25 +24,16 @@ const EMAIL_STYLE_EXAMPLE = `Example format:
 - End: "Apnar consideration er jonno dhonnobad"
 - Sign off with name + phone + LinkedIn`;
 
-const COVER_LETTER_STYLE_EXAMPLE = `Example format:
-- Opening: direct, confident
-- Body: 2 paragraphs — why this company + why me
-- Mention specific projects from resume
-- Closing: eager to discuss, professional sign-off
-- Max 300 words, no generic fluff`;
-
 export default function SettingsPage() {
   const { user, refreshUser } = useAuth();
   const [insights, setInsights] = useState<Insights | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [emailStyle, setEmailStyle] = useState("");
-  const [coverLetterStyle, setCoverLetterStyle] = useState("");
 
   useEffect(() => {
     if (user) {
       setEmailStyle(user.emailStyle ?? "");
-      setCoverLetterStyle(user.coverLetterStyle ?? "");
     }
   }, [user]);
 
@@ -51,7 +42,7 @@ export default function SettingsPage() {
     try {
       await api<User>("/users/profile", {
         method: "PATCH",
-        body: JSON.stringify({ emailStyle, coverLetterStyle }),
+        body: JSON.stringify({ emailStyle }),
       });
       await refreshUser();
       toast.success("Your writing style saved — AI will follow this format!");
@@ -101,7 +92,7 @@ export default function SettingsPage() {
       <Card className="mb-8 max-w-3xl bg-[var(--color-cyan)]">
         <h2 className="neo-heading text-sm">My Writing Style</h2>
         <p className="mt-2 text-sm font-medium">
-          Tell AI exactly how you want emails &amp; cover letters written. Not generic — your format, your tone.
+          Tell AI exactly how you want application emails written. Not generic — your format, your tone.
         </p>
 
         <div className="mt-6 space-y-4">
@@ -112,16 +103,6 @@ export default function SettingsPage() {
               value={emailStyle}
               onChange={(e) => setEmailStyle(e.target.value)}
               placeholder="Describe how you want application emails written..."
-              className="mt-2 min-h-[140px] bg-white text-sm"
-            />
-          </div>
-          <div>
-            <Label>Cover letter format &amp; tone</Label>
-            <p className="mt-1 text-xs text-neutral-600">{COVER_LETTER_STYLE_EXAMPLE}</p>
-            <Textarea
-              value={coverLetterStyle}
-              onChange={(e) => setCoverLetterStyle(e.target.value)}
-              placeholder="Describe your cover letter structure and tone..."
               className="mt-2 min-h-[140px] bg-white text-sm"
             />
           </div>
