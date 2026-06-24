@@ -8,7 +8,7 @@ NestJS backend for **CareerFlow** — an AI-powered job application tracker with
 |---|-----|
 | **API** | https://server-sooty-nine-27.vercel.app/api/v1 |
 | **Swagger** | https://server-sooty-nine-27.vercel.app/api/docs |
-| **Health** | https://server-sooty-nine-27.vercel.app/ |
+| **Health** | https://server-sooty-nine-27.vercel.app/api/v1/health |
 
 ## Features
 
