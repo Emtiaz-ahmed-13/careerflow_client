@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AnalysisType, ApplicationStatus, DocumentType, ResumeTrack } from '../../generated/prisma/client';
 import { EmailService } from '../../infrastructure/email/email.service';
+import { ImageKitService } from '../../infrastructure/storage/imagekit.service';
 import { AiService, LOW_MATCH_THRESHOLD } from '../ai/ai.service';
 import { ApplicationsService } from '../applications/applications.service';
 import { PrismaService } from '../../infrastructure/database/prisma.service';
@@ -21,6 +22,7 @@ export class GoalsService {
     private ai: AiService,
     private applications: ApplicationsService,
     private email: EmailService,
+    private imagekit: ImageKitService,
     private reminders: RemindersService,
   ) {}
 
@@ -365,17 +367,26 @@ export class GoalsService {
     ]);
 
     let emailSent = false;
+    let resumeAttached = false;
     let emailError: string | undefined;
     if (dto.sendEmail && recruiterEmail) {
       const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
       try {
+        const resumeBuffer = await this.imagekit.downloadBuffer(resume.fileUrl, resume.fileId);
+        const resumeFileName = resume.fileName.toLowerCase().endsWith('.pdf')
+          ? resume.fileName
+          : `${resume.fileName.replace(/\.[^.]+$/, '')}.pdf`;
+
         await this.email.send({
           to: recruiterEmail,
           subject: dto.emailSubject,
           content: dto.emailContent,
           replyTo: user.email,
+          attachments: [{ filename: resumeFileName, content: resumeBuffer }],
         });
         emailSent = true;
+        resumeAttached = true;
+        this.logger.log(`Resume attached (${resumeBuffer.length} bytes): ${resumeFileName}`);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Email send failed';
         this.logger.error(`Failed to send application email to ${recruiterEmail}: ${message}`);
@@ -392,6 +403,7 @@ export class GoalsService {
       reminder,
       recruiterEmail: recruiterEmail ?? null,
       emailSent,
+      resumeAttached,
       emailError,
       parsed: { companyName, position, jobUrl: jobUrl ?? null, recruiterEmail: recruiterEmail ?? null },
     };

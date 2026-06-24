@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ImageKitService } from '../../infrastructure/storage/imagekit.service';
 import { AiModule } from '../ai/ai.module';
 import { ApplicationsModule } from '../applications/applications.module';
 import { RemindersModule } from '../reminders/reminders.module';
@@ -8,7 +9,7 @@ import { GoalsService } from './goals.service';
 @Module({
   imports: [AiModule, ApplicationsModule, RemindersModule],
   controllers: [GoalsController],
-  providers: [GoalsService],
+  providers: [GoalsService, ImageKitService],
   exports: [GoalsService],
 })
 export class GoalsModule {}

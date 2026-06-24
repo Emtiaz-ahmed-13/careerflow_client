@@ -36,11 +36,13 @@ export class EmailService {
     subject,
     content,
     replyTo,
+    attachments,
   }: {
     to: string;
     subject: string;
     content: string;
     replyTo?: string;
+    attachments?: { filename: string; content: Buffer; contentType?: string }[];
   }) {
     if (!this.transporter) {
       throw new ServiceUnavailableException(
@@ -48,15 +50,25 @@ export class EmailService {
       );
     }
 
+    const mailAttachments = attachments?.map((a) => ({
+      filename: a.filename,
+      content: a.content,
+      contentType: a.contentType ?? 'application/pdf',
+    }));
+
     const info = await this.transporter.sendMail({
       from: this.fromAddress,
       to,
       replyTo: replyTo ?? this.fromAddress,
       subject,
       text: content,
+      attachments: mailAttachments?.length ? mailAttachments : undefined,
     });
 
-    this.logger.log(`Email sent to ${to}: ${info.messageId}`);
+    const attachNote = mailAttachments?.length
+      ? ` with ${mailAttachments.length} attachment(s)`
+      : '';
+    this.logger.log(`Email sent to ${to}${attachNote}: ${info.messageId}`);
     return { messageId: info.messageId, sent: true };
   }
 }

@@ -31,4 +31,27 @@ export class ImageKitService {
   async delete(fileId: string) {
     await this.client.files.delete(fileId);
   }
+
+  async downloadBuffer(fileUrl: string, fileId?: string): Promise<Buffer> {
+    const fetchUrl = async (url: string) => {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`Download failed (${res.status})`);
+      }
+      const buffer = Buffer.from(await res.arrayBuffer());
+      if (buffer.length < 100) {
+        throw new Error('Downloaded file is empty or too small');
+      }
+      return buffer;
+    };
+
+    try {
+      return await fetchUrl(fileUrl);
+    } catch (firstErr) {
+      if (!fileId) throw firstErr;
+      const meta = await this.client.files.get(fileId);
+      if (!meta.url || meta.url === fileUrl) throw firstErr;
+      return fetchUrl(meta.url);
+    }
+  }
 }
