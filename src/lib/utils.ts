@@ -13,7 +13,7 @@ export function copyToClipboard(text: string) {
 export function previewErrorMessage(msg: string, jobDescription: string, jobUrl: string) {
   const lower = msg.toLowerCase();
 
-  if (/ai failed|try again|service unavailable|503/i.test(msg)) {
+  if (/ai failed|try again|service unavailable|503|rate limit|daily limit/i.test(msg)) {
     return msg;
   }
   if (/upload.*resume|vault/i.test(msg)) {
