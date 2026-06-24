@@ -64,6 +64,7 @@ export type GoalSessionResult = {
   recruiterEmail?: string | null;
   parsed?: ParsedJobDetails;
   emailSent?: boolean;
+  resumeAttached?: boolean;
   emailError?: string;
   skipped?: boolean;
   message?: string;

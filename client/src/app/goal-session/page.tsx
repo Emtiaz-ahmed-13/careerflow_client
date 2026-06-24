@@ -214,7 +214,7 @@ export default function GoalSessionPage() {
       if (data.skipped) {
         toast.info("Skipped — no application logged");
       } else if (data.emailSent) {
-        toast.success("Applied + email sent!");
+        toast.success(data.resumeAttached ? "Applied + email sent with resume!" : "Applied + email sent!");
       } else if (data.emailError) {
         toast.error(`Applied but email failed: ${data.emailError}`);
       } else if (opts.sendEmail && !recruiterEmail) {
@@ -412,7 +412,11 @@ export default function GoalSessionPage() {
           <Card className="bg-[var(--color-lime)]">
             <p className="neo-heading text-xs">Logged as Applied</p>
             <p className="mt-1 font-bold">{result.application.position} @ {result.application.companyName}</p>
-            {result.emailSent && <p className="mt-1 text-sm font-bold">✓ Email sent successfully</p>}
+            {result.emailSent && (
+              <p className="mt-1 text-sm font-bold">
+                ✓ Email sent successfully{result.resumeAttached ? " with resume attached" : ""}
+              </p>
+            )}
             {result.emailError && <p className="mt-1 text-sm font-bold text-red-800">Email send failed — application saved. {result.emailError}</p>}
             <p className="mt-2 text-sm">{result.dailyGoal?.message}</p>
             <p className="mt-2 text-xs font-medium">Follow-up reminder set for 3 days</p>
