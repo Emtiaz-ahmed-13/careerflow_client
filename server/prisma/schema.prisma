@@ -1,0 +1,275 @@
+// CareerFlow — Prisma ORM v7 Schema
+// PostgreSQL via Supabase
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum ApplicationStatus {
+  Applied
+  Assessment
+  Interview
+  FinalInterview
+  Offer
+  Rejected
+}
+
+enum InterviewType {
+  Phone
+  Video
+  Onsite
+  Technical
+  HR
+  Other
+}
+
+enum InterviewOutcome {
+  Pending
+  Passed
+  Failed
+  Cancelled
+}
+
+enum DocumentType {
+  Resume
+  JobDescription
+  CoverLetter
+  Other
+}
+
+enum AnalysisType {
+  Match
+  Review
+}
+
+enum QuestionCategory {
+  HR
+  Technical
+  Behavioral
+}
+
+enum ResumeTrack {
+  Backend
+  Frontend
+  SoftwareEngineer
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id               String   @id @default(uuid()) @db.Uuid
+  email            String   @unique
+  passwordHash     String   @map("password_hash")
+  firstName        String   @map("first_name")
+  lastName         String   @map("last_name")
+  headline         String?
+  phone            String
+  location         String?
+  linkedinUrl      String   @map("linkedin_url")
+  githubUrl        String   @map("github_url")
+  avatarUrl        String?  @map("avatar_url")
+  avatarFileId     String?  @map("avatar_file_id")
+  emailStyle       String?  @map("email_style") @db.Text
+  coverLetterStyle String?  @map("cover_letter_style") @db.Text
+  refreshTokenHash String?  @map("refresh_token_hash")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  applications      JobApplication[]
+  documents         Document[]
+  reminders         Reminder[]
+  resumeAnalyses    ResumeAnalysis[]
+  coverLetters      CoverLetter[]
+  interviewQuestions InterviewQuestion[]
+  applicationEmails ApplicationEmail[]
+  goal              UserGoal?
+
+  @@map("users")
+}
+
+model UserGoal {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @unique @map("user_id") @db.Uuid
+  dailyTarget     Int      @default(1) @map("daily_target")
+  commitmentDays  Int      @default(30) @map("commitment_days")
+  startedAt       DateTime @default(now()) @map("started_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_goals")
+}
+
+model JobApplication {
+  id                 String            @id @default(uuid()) @db.Uuid
+  userId             String            @map("user_id") @db.Uuid
+  companyName        String            @map("company_name")
+  position           String
+  jobUrl             String?           @map("job_url")
+  salary             String?
+  location           String?
+  deadline           DateTime?
+  notes              String?           @db.Text
+  status             ApplicationStatus @default(Applied)
+  jobDescriptionText String?           @map("job_description_text") @db.Text
+  kanbanOrder        Int               @default(0) @map("kanban_order")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviews         Interview[]
+  documents          Document[]
+  reminders          Reminder[]
+  resumeAnalyses     ResumeAnalysis[]
+  coverLetters       CoverLetter[]
+  interviewQuestions InterviewQuestion[]
+  applicationEmails  ApplicationEmail[]
+
+  @@index([userId, status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("job_applications")
+}
+
+model Interview {
+  id              String           @id @default(uuid()) @db.Uuid
+  applicationId   String           @map("application_id") @db.Uuid
+  type            InterviewType    @default(Video)
+  scheduledAt     DateTime         @map("scheduled_at")
+  durationMinutes Int?             @map("duration_minutes")
+  interviewerName String?          @map("interviewer_name")
+  notes           String?          @db.Text
+  outcome         InterviewOutcome @default(Pending)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, scheduledAt])
+  @@map("interviews")
+}
+
+model Document {
+  id                 String       @id @default(uuid()) @db.Uuid
+  userId             String       @map("user_id") @db.Uuid
+  applicationId      String?      @map("application_id") @db.Uuid
+  type               DocumentType
+  resumeTrack        ResumeTrack? @map("resume_track")
+  fileName           String       @map("file_name")
+  fileId             String       @map("file_id")
+  fileUrl            String       @map("file_url")
+  extractedText      String?      @map("extracted_text") @db.Text
+  createdAt          DateTime     @default(now()) @map("created_at")
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application     JobApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  resumeAnalyses  ResumeAnalysis[] @relation("ResumeDocument")
+  coverLetters    CoverLetter[]
+
+  @@unique([userId, resumeTrack])
+  @@index([userId, type])
+  @@map("documents")
+}
+
+model Reminder {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  applicationId String?   @map("application_id") @db.Uuid
+  title         String
+  remindAt      DateTime  @map("remind_at")
+  isCompleted   Boolean   @default(false) @map("is_completed")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application JobApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, remindAt])
+  @@map("reminders")
+}
+
+model ResumeAnalysis {
+  id                String       @id @default(uuid()) @db.Uuid
+  userId            String       @map("user_id") @db.Uuid
+  documentId        String       @map("document_id") @db.Uuid
+  applicationId     String?      @map("application_id") @db.Uuid
+  analysisType      AnalysisType @map("analysis_type")
+  matchScore        Int?         @map("match_score")
+  atsScore          Int?         @map("ats_score")
+  strongSkills      Json         @default("[]") @map("strong_skills")
+  missingSkills     Json         @default("[]") @map("missing_skills")
+  weakAreas         Json         @default("[]") @map("weak_areas")
+  grammarIssues     Json         @default("[]") @map("grammar_issues")
+  formattingIssues  Json         @default("[]") @map("formatting_issues")
+  missingKeywords   Json         @default("[]") @map("missing_keywords")
+  suggestions       Json         @default("[]")
+  rawAiResponse     Json?        @map("raw_ai_response")
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document    Document        @relation("ResumeDocument", fields: [documentId], references: [id], onDelete: Cascade)
+  application JobApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("resume_analyses")
+}
+
+model CoverLetter {
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @map("user_id") @db.Uuid
+  applicationId      String?  @map("application_id") @db.Uuid
+  resumeDocumentId   String   @map("resume_document_id") @db.Uuid
+  jobDescriptionText String   @map("job_description_text") @db.Text
+  content            String   @db.Text
+  tone               String?
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application    JobApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  resumeDocument Document        @relation(fields: [resumeDocumentId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("cover_letters")
+}
+
+model InterviewQuestion {
+  id                 String           @id @default(uuid()) @db.Uuid
+  userId             String           @map("user_id") @db.Uuid
+  applicationId      String?          @map("application_id") @db.Uuid
+  jobDescriptionText String           @map("job_description_text") @db.Text
+  category           QuestionCategory
+  questions          Json             @default("[]")
+  createdAt          DateTime         @default(now()) @map("created_at")
+
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application JobApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("interview_questions")
+}
+
+model ApplicationEmail {
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @map("user_id") @db.Uuid
+  applicationId      String?  @map("application_id") @db.Uuid
+  companyName        String   @map("company_name")
+  position           String
+  jobDescriptionText String   @map("job_description_text") @db.Text
+  subject            String
+  content            String   @db.Text
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application JobApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("application_emails")
+}
