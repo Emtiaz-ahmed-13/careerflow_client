@@ -1,7 +1,9 @@
 import { INestApplication, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 export function configureApp(app: INestApplication) {
+  app.useGlobalFilters(new AllExceptionsFilter());
   app.setGlobalPrefix('api/v1', {
     exclude: [{ path: '', method: RequestMethod.GET }],
   });

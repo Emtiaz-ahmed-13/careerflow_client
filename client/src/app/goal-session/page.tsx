@@ -12,7 +12,7 @@ import { JobPasteGuide, useExtensionJobImport } from "@/components/shared/job-pa
 import { Tag } from "@/components/shared/tag";
 import { api, uploadFile } from "@/lib/api/client";
 import { toast } from "@/lib/toast";
-import { copyToClipboard, openEmailComposer } from "@/lib/utils";
+import { copyToClipboard, openEmailComposer, previewErrorMessage } from "@/lib/utils";
 import type {
   CommitmentDays,
   DailyGoal,
@@ -180,10 +180,11 @@ export default function GoalSessionPage() {
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Preview failed";
-      if (/linkedin|fetch|paste/i.test(msg) || (jobUrl.includes("linkedin") && jobDescription.length < 150)) {
+      const friendly = previewErrorMessage(msg, jobDescription, jobUrl);
+      if (/linkedin|fetch|paste/i.test(friendly) || (jobUrl.includes("linkedin") && jobDescription.length < 150)) {
         setFetchError("LinkedIn blocked auto-fetch or text too short");
       }
-      toast.error(msg.includes("paste") ? msg : `${msg} — paste full job description below`);
+      toast.error(friendly);
     } finally {
       setPreviewing(false);
     }

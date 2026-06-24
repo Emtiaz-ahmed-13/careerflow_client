@@ -57,7 +57,9 @@ export async function api<T>(
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message ?? "Request failed");
+    const raw = err.message ?? res.statusText ?? "Request failed";
+    const message = Array.isArray(raw) ? raw.join(", ") : String(raw);
+    throw new Error(message);
   }
 
   return res.json();

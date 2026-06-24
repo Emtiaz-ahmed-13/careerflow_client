@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Groq from 'groq-sdk';
 
@@ -36,40 +36,60 @@ export class LlmService {
     }
   }
 
-  private async generateJson<T>(prompt: string): Promise<T> {
-    const text = await this.generateText(
-      prompt + '\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown, no explanation.',
+  private aiUnavailable(err: unknown): never {
+    const detail = err instanceof Error ? err.message : String(err);
+    this.logger.error(`AI request failed: ${detail}`);
+    throw new ServiceUnavailableException(
+      'AI failed — please try again in a moment. If it keeps failing, paste the full job description and retry.',
     );
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('AI did not return valid JSON');
-    return JSON.parse(jsonMatch[0]) as T;
+  }
+
+  private async generateJson<T>(prompt: string): Promise<T> {
+    try {
+      const text = await this.generateText(
+        prompt + '\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown, no explanation.',
+      );
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('AI did not return valid JSON');
+      }
+      return JSON.parse(jsonMatch[0]) as T;
+    } catch (err) {
+      if (err instanceof ServiceUnavailableException) throw err;
+      this.aiUnavailable(err);
+    }
   }
 
   private async generateText(prompt: string): Promise<string> {
-    if (this.provider === 'groq' && this.groq) {
-      const completion = await this.groq.chat.completions.create({
-        model: this.groqModel,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.4,
-        max_tokens: 4096,
-      });
-      return completion.choices[0]?.message?.content ?? '';
-    }
+    try {
+      if (this.provider === 'groq' && this.groq) {
+        const completion = await this.groq.chat.completions.create({
+          model: this.groqModel,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.4,
+          max_tokens: 4096,
+        });
+        return completion.choices[0]?.message?.content ?? '';
+      }
 
-    if (this.provider === 'anthropic' && this.anthropic) {
-      const message = await this.anthropic.messages.create({
-        model: this.anthropicModel,
-        max_tokens: 4096,
-        messages: [{ role: 'user', content: prompt }],
-      });
-      const block = message.content[0];
-      if (block.type !== 'text') throw new Error('Unexpected AI response type');
-      return block.text;
-    }
+      if (this.provider === 'anthropic' && this.anthropic) {
+        const message = await this.anthropic.messages.create({
+          model: this.anthropicModel,
+          max_tokens: 4096,
+          messages: [{ role: 'user', content: prompt }],
+        });
+        const block = message.content[0];
+        if (block.type !== 'text') throw new Error('Unexpected AI response type');
+        return block.text;
+      }
 
-    if (!this.geminiModel) throw new Error('Gemini not configured');
-    const result = await this.geminiModel.generateContent(prompt);
-    return result.response.text();
+      if (!this.geminiModel) throw new Error('Gemini not configured');
+      const result = await this.geminiModel.generateContent(prompt);
+      return result.response.text();
+    } catch (err) {
+      if (err instanceof ServiceUnavailableException) throw err;
+      this.aiUnavailable(err);
+    }
   }
 
   analyzeResumeMatch(resumeText: string, jobDescription: string) {
