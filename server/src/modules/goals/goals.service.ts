@@ -13,6 +13,11 @@ import { GoalSessionDto } from './dto/goal-session.dto';
 
 const TRACKS: ResumeTrack[] = ['Backend', 'Frontend', 'SoftwareEngineer'];
 
+function normalizeTrack(track: string | undefined, fallback: ResumeTrack): ResumeTrack {
+  if (track && TRACKS.includes(track as ResumeTrack)) return track as ResumeTrack;
+  return fallback;
+}
+
 @Injectable()
 export class GoalsService {
   private readonly logger = new Logger(GoalsService.name);
@@ -248,7 +253,10 @@ export class GoalsService {
       this.ai.parseJobDescription(jobDescriptionText),
     ]);
 
-    const resumeTrack = dto.resumeTrack ?? suggested.track;
+    const resumeTrack = normalizeTrack(
+      dto.resumeTrack ?? suggested.track,
+      dto.resumeTrack ?? 'SoftwareEngineer',
+    );
     const resume = await this.prisma.document.findFirst({
       where: { userId, type: DocumentType.Resume, resumeTrack },
     });

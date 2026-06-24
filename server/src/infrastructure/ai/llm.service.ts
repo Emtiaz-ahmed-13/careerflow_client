@@ -39,15 +39,29 @@ export class LlmService {
   private aiUnavailable(err: unknown): never {
     const detail = err instanceof Error ? err.message : String(err);
     this.logger.error(`AI request failed: ${detail}`);
+
+    if (/429|rate.?limit|rate_limit/i.test(detail)) {
+      const retryIn = detail.match(/try again in ([^.]+)/i)?.[1]?.trim();
+      throw new ServiceUnavailableException(
+        retryIn
+          ? `AI daily limit reached — try again in ${retryIn}.`
+          : 'AI rate limit reached — wait a few minutes and retry.',
+      );
+    }
+
     throw new ServiceUnavailableException(
       'AI failed — please try again in a moment. If it keeps failing, paste the full job description and retry.',
     );
   }
 
-  private async generateJson<T>(prompt: string): Promise<T> {
+  private async generateJson<T>(
+    prompt: string,
+    opts?: { maxTokens?: number; model?: string },
+  ): Promise<T> {
     try {
       const text = await this.generateText(
         prompt + '\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown, no explanation.',
+        opts,
       );
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
@@ -60,22 +74,26 @@ export class LlmService {
     }
   }
 
-  private async generateText(prompt: string): Promise<string> {
+  private async generateText(
+    prompt: string,
+    opts?: { maxTokens?: number; model?: string },
+  ): Promise<string> {
+    const maxTokens = opts?.maxTokens ?? 2048;
     try {
       if (this.provider === 'groq' && this.groq) {
         const completion = await this.groq.chat.completions.create({
-          model: this.groqModel,
+          model: opts?.model ?? this.groqModel,
           messages: [{ role: 'user', content: prompt }],
           temperature: 0.4,
-          max_tokens: 4096,
+          max_tokens: maxTokens,
         });
         return completion.choices[0]?.message?.content ?? '';
       }
 
       if (this.provider === 'anthropic' && this.anthropic) {
         const message = await this.anthropic.messages.create({
-          model: this.anthropicModel,
-          max_tokens: 4096,
+          model: opts?.model ?? this.anthropicModel,
+          max_tokens: maxTokens,
           messages: [{ role: 'user', content: prompt }],
         });
         const block = message.content[0];
@@ -99,14 +117,17 @@ export class LlmService {
       missingSkills: string[];
       weakAreas: string[];
       suggestions: string[];
-    }>(`You are an expert career coach. Analyze this resume against the job description.
+    }>(
+      `You are an expert career coach. Analyze this resume against the job description.
 Return ONLY valid JSON with keys: matchScore (0-100 number), strongSkills (string[]), missingSkills (string[]), weakAreas (string[]), suggestions (string[]).
 
 Resume:
-${resumeText.slice(0, 15000)}
+${resumeText.slice(0, 8000)}
 
 Job Description:
-${jobDescription.slice(0, 15000)}`);
+${jobDescription.slice(0, 8000)}`,
+      { maxTokens: 1024 },
+    );
   }
 
   reviewResume(resumeText: string) {
@@ -156,7 +177,8 @@ ${jobDescription.slice(0, 10000)}`);
     const styleBlock = styleInstructions
       ? `\n\nIMPORTANT — Follow this EXACT email format, tone, and structure from the user (do not use generic templates):\n${styleInstructions}\n`
       : '';
-    return this.generateJson<{ subject: string; content: string }>(`Write a job application email following the user's preferred style.${styleBlock}
+    return this.generateJson<{ subject: string; content: string }>(
+      `Write a job application email following the user's preferred style.${styleBlock}
 Return ONLY valid JSON with keys: subject (string), content (string, email body with greeting and sign-off).
 
 Company: ${companyName}
@@ -166,7 +188,9 @@ Email: ${userInfo.email}, Phone: ${userInfo.phone}
 LinkedIn: ${userInfo.linkedinUrl}, GitHub: ${userInfo.githubUrl}
 
 Job Description:
-${jobDescription.slice(0, 12000)}`);
+${jobDescription.slice(0, 6000)}`,
+      { maxTokens: 1536 },
+    );
   }
 
   generateInterviewQuestions(jobDescription: string, category: string) {
@@ -196,7 +220,8 @@ ${applicationsSummary.slice(0, 12000)}`);
       position: string;
       jobUrl: string | null;
       recruiterEmail: string | null;
-    }>(`Extract job posting details from this text (LinkedIn, Indeed, company careers page, etc).
+    }>(
+      `Extract job posting details from this text (LinkedIn, Indeed, company careers page, etc).
 Return ONLY valid JSON with keys:
 - companyName (string — employer or hiring company name)
 - position (string — job title / role name)
@@ -206,7 +231,9 @@ Return ONLY valid JSON with keys:
 Use best guess from context when not explicit. If company or title truly cannot be determined, use "Unknown Company" or "Unknown Position".
 
 Job posting:
-${jobDescription.slice(0, 12000)}`);
+${jobDescription.slice(0, 6000)}`,
+      { maxTokens: 256, model: 'llama-3.1-8b-instant' },
+    );
   }
 
   suggestResumeTrack(jobDescription: string) {
@@ -219,7 +246,8 @@ Frontend = frontend/UI/React/CSS roles
 SoftwareEngineer = full-stack or general SWE roles
 
 Job Description:
-${jobDescription.slice(0, 8000)}`,
+${jobDescription.slice(0, 4000)}`,
+      { maxTokens: 128, model: 'llama-3.1-8b-instant' },
     );
   }
 }
