@@ -40,6 +40,9 @@ export default function GoalSessionPage() {
   const [confirming, setConfirming] = useState(false);
   const [savingCommitment, setSavingCommitment] = useState(false);
   const [preview, setPreview] = useState<GoalSessionPreview | null>(null);
+  const [companyName, setCompanyName] = useState("");
+  const [position, setPosition] = useState("");
+  const [offerManual, setOfferManual] = useState(false);
   const [emailSubject, setEmailSubject] = useState("");
   const [emailContent, setEmailContent] = useState("");
   const [result, setResult] = useState<GoalSessionResult | null>(null);
@@ -143,6 +146,51 @@ export default function GoalSessionPage() {
     }
   };
 
+  const applyPreview = (data: GoalSessionPreview) => {
+    setPreview(data);
+    setJobDescription(data.jobDescriptionText);
+    if (data.jobUrl) setJobUrl(data.jobUrl);
+    setTrack(data.resumeTrack);
+    setCompanyName(data.parsed.companyName);
+    setPosition(data.parsed.position);
+    setEmailSubject(data.email?.subject ?? "");
+    setEmailContent(data.email?.content ?? "");
+    if (data.parsed.recruiterEmail) setRecruiterEmail(data.parsed.recruiterEmail);
+    setOfferManual(false);
+  };
+
+  const runManualPreview = async () => {
+    if (!vault?.resumes[track]) {
+      return toast.error(`Upload ${RESUME_TRACK_LABELS[track]} resume in vault first`);
+    }
+    if (!jobDescription.trim() && !jobUrl.trim()) {
+      return toast.error("Paste job URL or description");
+    }
+
+    setPreviewing(true);
+    setPreview(null);
+    setResult(null);
+    setFetchError(null);
+    try {
+      const data = await api<GoalSessionPreview>("/goals/session/manual-preview", {
+        method: "POST",
+        body: JSON.stringify({
+          resumeTrack: track,
+          jobDescriptionText: jobDescription || undefined,
+          jobUrl: jobUrl || undefined,
+          companyName: companyName.trim() || undefined,
+          position: position.trim() || undefined,
+        }),
+      });
+      applyPreview(data);
+      toast.success("Manual mode — fill company & title, edit email, then confirm");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Manual preview failed");
+    } finally {
+      setPreviewing(false);
+    }
+  };
+
   const runPreview = async () => {
     if (!vault?.resumes[track]) {
       return toast.error(`Upload ${RESUME_TRACK_LABELS[track]} resume in vault first`);
@@ -164,13 +212,7 @@ export default function GoalSessionPage() {
           jobUrl: jobUrl || undefined,
         }),
       });
-      setPreview(data);
-      setJobDescription(data.jobDescriptionText);
-      if (data.jobUrl) setJobUrl(data.jobUrl);
-      setTrack(data.resumeTrack);
-      setEmailSubject(data.email?.subject ?? "");
-      setEmailContent(data.email?.content ?? "");
-      if (data.parsed.recruiterEmail) setRecruiterEmail(data.parsed.recruiterEmail);
+      applyPreview(data);
       if (data.lowMatch) {
         toast.warning(`Low match (${data.match.matchScore}%) — review before applying`);
       } else {
@@ -182,6 +224,9 @@ export default function GoalSessionPage() {
       if (/linkedin|fetch|paste/i.test(friendly) || (jobUrl.includes("linkedin") && jobDescription.length < 150)) {
         setFetchError("LinkedIn blocked auto-fetch or text too short");
       }
+      if (/ai failed|rate limit|daily limit|service unavailable|503/i.test(friendly)) {
+        setOfferManual(true);
+      }
       toast.error(friendly);
     } finally {
       setPreviewing(false);
@@ -190,6 +235,9 @@ export default function GoalSessionPage() {
 
   const confirmSession = async (opts: { sendEmail?: boolean; skipApply?: boolean }) => {
     if (!preview) return;
+    if (preview.manual && (!companyName.trim() || !position.trim() || companyName === "Unknown Company" || position === "Unknown Position")) {
+      return toast.error("Enter company name and job title");
+    }
     setConfirming(true);
     try {
       const data = await api<GoalSessionResult>("/goals/session/confirm", {
@@ -197,13 +245,14 @@ export default function GoalSessionPage() {
         body: JSON.stringify({
           resumeTrack: preview.resumeTrack,
           jobDescriptionText: preview.jobDescriptionText,
-          companyName: preview.parsed.companyName,
-          position: preview.parsed.position,
+          companyName: companyName.trim() || preview.parsed.companyName,
+          position: position.trim() || preview.parsed.position,
           jobUrl: preview.jobUrl ?? undefined,
           recruiterEmail: recruiterEmail || undefined,
           emailSubject,
           emailContent,
-          matchScore: preview.match.matchScore,
+          matchScore: preview.manual ? undefined : preview.match.matchScore ?? undefined,
+          manual: preview.manual ?? false,
           sendEmail: opts.sendEmail,
           skipApply: opts.skipApply,
         }),
@@ -303,16 +352,50 @@ export default function GoalSessionPage() {
           <Zap className="h-4 w-4" />
           {previewing ? "AI analyzing..." : "Preview Session (match + email)"}
         </Button>
+
+        <Button variant="white" className="w-full" onClick={runManualPreview} disabled={previewing || confirming}>
+          {previewing ? "Loading..." : "Manual Apply (no AI)"}
+        </Button>
+
+        {offerManual && !preview && (
+          <p className="neo-border bg-[var(--color-yellow)] p-3 text-sm font-bold">
+            AI unavailable — use <strong>Manual Apply</strong> to log this job without match score.
+          </p>
+        )}
       </section>
 
       {preview && !result && (
         <section id="goal-session-preview" className="space-y-4 border-t-[3px] border-black pt-8">
           <div>
-            <h2 className="neo-heading text-lg">Step 2 — Edit email &amp; confirm</h2>
-            <p className="mt-1 text-sm font-medium text-neutral-600">Email edit koro, tarpor Confirm Apply</p>
+            <h2 className="neo-heading text-lg">
+              Step 2 — {preview.manual ? "Fill details & confirm" : "Edit email & confirm"}
+            </h2>
+            <p className="mt-1 text-sm font-medium text-neutral-600">
+              {preview.manual
+                ? "No AI — edit company, title, email, then confirm"
+                : "Email edit koro, tarpor Confirm Apply"}
+            </p>
           </div>
 
+          {preview.manual && (
+            <Card className="bg-[var(--color-yellow)]">
+              <p className="neo-heading text-xs">Manual mode</p>
+              <p className="mt-1 text-sm font-medium">Match score skipped — application will still be logged.</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Company</Label>
+                  <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="mt-1 bg-white" placeholder="Acme Corp" />
+                </div>
+                <div>
+                  <Label>Job title</Label>
+                  <Input value={position} onChange={(e) => setPosition(e.target.value)} className="mt-1 bg-white" placeholder="Senior Backend Engineer" />
+                </div>
+              </div>
+            </Card>
+          )}
+
           <div className="grid gap-6 lg:grid-cols-2">
+            {!preview.manual && (
             <Card className={`text-center ${preview.lowMatch ? "bg-[var(--color-pink)]" : "bg-[var(--color-cyan)]"}`}>
               <p className="text-xs font-black uppercase">Match Score</p>
               <p className="neo-heading text-5xl">{preview.match.matchScore}%</p>
@@ -329,8 +412,9 @@ export default function GoalSessionPage() {
                 ))}
               </div>
             </Card>
+            )}
 
-            <Card className="bg-white">
+            <Card className={`bg-white ${preview.manual ? "lg:col-span-2" : ""}`}>
               <Label>Recruiter Email</Label>
               <Input value={recruiterEmail} onChange={(e) => setRecruiterEmail(e.target.value)} className="mt-2 bg-white" placeholder="hr@company.com" type="email" />
               {preview.emailConfigured ? (
@@ -358,7 +442,7 @@ export default function GoalSessionPage() {
           </Card>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-            {preview.lowMatch && (
+            {preview.lowMatch && !preview.manual && (
               <Button variant="pink" onClick={() => confirmSession({ skipApply: true })} disabled={confirming}>
                 Skip Apply (low match)
               </Button>
