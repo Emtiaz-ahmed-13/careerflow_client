@@ -42,12 +42,13 @@ export const COMMITMENT_OPTIONS = [7, 14, 30, 60, 90] as const;
 export type CommitmentDays = (typeof COMMITMENT_OPTIONS)[number];
 
 export type GoalSessionPreview = {
+  manual?: boolean;
   jobDescriptionText: string;
   jobUrl: string | null;
   resumeTrack: ResumeTrack;
   suggestedTrack: { track: ResumeTrack; reason: string };
   parsed: ParsedJobDetails;
-  match: { matchScore: number; strongSkills: string[]; missingSkills: string[] };
+  match: { matchScore: number | null; strongSkills: string[]; missingSkills: string[] };
   email: { subject: string; content: string };
   lowMatch: boolean;
   matchThreshold: number;

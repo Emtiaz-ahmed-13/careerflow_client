@@ -1,0 +1,3 @@
+module.exports=[27164,a=>{"use strict";a.i(76010),a.i(69338);var b=a.i(96904);let c={contentType:"image/png",size:{width:180,height:180}};async function d(a){let{__metadata_id__:d,...e}=await a.params,f=(0,b.fillMetadataSegment)("/",e,"apple-icon",!1);return[function(a){let b={alt:a.alt,type:a.contentType||"image/png",url:f+"?c518611cfbada9da"},{size:c}=a;return c&&(b.sizes=`${c.width}x${c.height}`),b}(c)]}a.s(["default",0,d],27164)},8151,a=>{a.n(a.i(27164))}];
+
+//# sourceMappingURL=Desktop_GITHUB_careerflow_client_src_app_apple-icon--metadata_162dsqs.js.map

@@ -1,0 +1,22 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/apple-icon/route": "app/apple-icon/route.js",
+  "/applications/[id]/page": "app/applications/[id]/page.js",
+  "/applications/page": "app/applications/page.js",
+  "/cover-letter/page": "app/cover-letter/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/email-generator/page": "app/email-generator/page.js",
+  "/goal-session/page": "app/goal-session/page.js",
+  "/icon/route": "app/icon/route.js",
+  "/interview-prep/page": "app/interview-prep/page.js",
+  "/job-matcher/page": "app/job-matcher/page.js",
+  "/kanban/page": "app/kanban/page.js",
+  "/login/page": "app/login/page.js",
+  "/onboarding/page": "app/onboarding/page.js",
+  "/page": "app/page.js",
+  "/profile/page": "app/profile/page.js",
+  "/register/page": "app/register/page.js",
+  "/resume-analyzer/page": "app/resume-analyzer/page.js",
+  "/settings/page": "app/settings/page.js"
+}
