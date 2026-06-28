@@ -438,14 +438,6 @@ export type UserGoalUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserGoalUpdateToOneWithWhereWithoutUserInput, Prisma.UserGoalUpdateWithoutUserInput>, Prisma.UserGoalUncheckedUpdateWithoutUserInput>
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type UserGoalCreateWithoutUserInput = {
   id?: string
   dailyTarget?: number

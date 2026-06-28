@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/DailyAiUsage'
 export type * from './models/UserGoal'
 export type * from './models/JobApplication'
 export type * from './models/Interview'

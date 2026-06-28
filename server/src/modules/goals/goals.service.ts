@@ -6,8 +6,10 @@ import { AiService, LOW_MATCH_THRESHOLD } from '../ai/ai.service';
 import { ApplicationsService } from '../applications/applications.service';
 import { PrismaService } from '../../infrastructure/database/prisma.service';
 import { RemindersService } from '../reminders/reminders.service';
+import { AiQuotaService } from './ai-quota.service';
 import { COMMITMENT_OPTIONS } from './dto/set-commitment.dto';
 import { GoalSessionConfirmDto } from './dto/goal-session-preview.dto';
+import { GoalSessionManualPreviewDto } from './dto/goal-session-preview.dto';
 import { GoalSessionPreviewDto } from './dto/goal-session-preview.dto';
 import { GoalSessionDto } from './dto/goal-session.dto';
 
@@ -16,6 +18,30 @@ const TRACKS: ResumeTrack[] = ['Backend', 'Frontend', 'SoftwareEngineer'];
 function normalizeTrack(track: string | undefined, fallback: ResumeTrack): ResumeTrack {
   if (track && TRACKS.includes(track as ResumeTrack)) return track as ResumeTrack;
   return fallback;
+}
+
+function parseJobHeuristic(text: string) {
+  const recruiterEmail = text.match(/[\w.+-]+@[\w.-]+\.\w{2,}/)?.[0] ?? null;
+  let position = 'Unknown Position';
+  let companyName = 'Unknown Company';
+
+  const atMatch = text.match(/(.{3,80}?)\s+at\s+([A-Za-z0-9][\w\s&.,'-]{1,58})/i);
+  if (atMatch) {
+    position = atMatch[1].replace(/^(we are |we're )?hiring\s+(a\s+)?/i, '').trim();
+    companyName = atMatch[2].trim().replace(/[.,].*$/, '');
+  } else {
+    const hiringMatch = text.match(
+      /(?:hiring|seeking|looking for|opening for)\s+(?:a\s+)?([A-Za-z][\w\s/&.-]{2,60}?)(?:\n|\.|,| to)/i,
+    );
+    if (hiringMatch) position = hiringMatch[1].trim();
+
+    const companyMatch = text.match(
+      /(?:^|\n)([A-Z][A-Za-z0-9\s&.,'-]{2,40})(?:\s+is hiring|\s+careers|\s+team)/m,
+    );
+    if (companyMatch) companyName = companyMatch[1].trim();
+  }
+
+  return { companyName, position, recruiterEmail };
 }
 
 @Injectable()
@@ -29,6 +55,7 @@ export class GoalsService {
     private email: EmailService,
     private imagekit: ImageKitService,
     private reminders: RemindersService,
+    private aiQuota: AiQuotaService,
   ) {}
 
   private dayKey(date: Date) {
@@ -138,9 +165,12 @@ export class GoalsService {
   async getDailyGoal(userId: string) {
     const goal = await this.getOrCreateGoal(userId);
     const { start, end } = this.todayRange();
-    const completedToday = await this.prisma.jobApplication.count({
-      where: { userId, createdAt: { gte: start, lte: end } },
-    });
+    const [completedToday, aiUsage] = await Promise.all([
+      this.prisma.jobApplication.count({
+        where: { userId, createdAt: { gte: start, lte: end } },
+      }),
+      this.aiQuota.getUsage(userId),
+    ]);
 
     const applyDays = await this.getApplyDays(userId);
     const streak = this.calculateStreak(applyDays, goal.dailyTarget, goal.startedAt);
@@ -201,6 +231,7 @@ export class GoalsService {
       commitmentActive,
       startedAt: goal.startedAt.toISOString(),
       message,
+      ...aiUsage,
     };
   }
 
@@ -246,6 +277,7 @@ export class GoalsService {
   }
 
   async previewSession(userId: string, dto: GoalSessionPreviewDto) {
+    await this.aiQuota.assertWithinLimit(userId);
     const { jobDescriptionText, jobUrl } = await this.resolveJobInput(dto);
 
     const [suggested, parsed] = await Promise.all([
@@ -275,6 +307,8 @@ export class GoalsService {
       this.ai.generateEmailContent(userId, jobDescriptionText, companyName, position),
     ]);
 
+    await this.aiQuota.consume(userId);
+
     return {
       jobDescriptionText,
       jobUrl: jobUrl ?? parsed.jobUrl,
@@ -294,6 +328,64 @@ export class GoalsService {
     };
   }
 
+  async manualPreviewSession(userId: string, dto: GoalSessionManualPreviewDto) {
+    const { jobDescriptionText, jobUrl } = await this.resolveJobInput(dto);
+
+    const resumeTrack = normalizeTrack(dto.resumeTrack, dto.resumeTrack ?? 'SoftwareEngineer');
+    const resume = await this.prisma.document.findFirst({
+      where: { userId, type: DocumentType.Resume, resumeTrack },
+    });
+    if (!resume?.extractedText) {
+      throw new BadRequestException(
+        `Upload your ${resumeTrack} resume once in the vault above`,
+      );
+    }
+
+    const heuristic = parseJobHeuristic(jobDescriptionText);
+    const companyName = dto.companyName?.trim() || heuristic.companyName;
+    const position = dto.position?.trim() || heuristic.position;
+    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+
+    const subject = `Application for ${position} — ${user.firstName} ${user.lastName}`;
+    const content = `Dear Hiring Team,
+
+I am writing to express my interest in the ${position} role at ${companyName}.
+
+Please find my resume attached. I would welcome the opportunity to discuss how my experience aligns with your needs.
+
+Best regards,
+${user.firstName} ${user.lastName}
+${user.email}
+${user.phone}
+${user.linkedinUrl}`;
+
+    return {
+      manual: true,
+      jobDescriptionText,
+      jobUrl,
+      resumeTrack,
+      suggestedTrack: {
+        track: resumeTrack,
+        reason: 'Manual mode — using your selected resume track',
+      },
+      parsed: {
+        companyName,
+        position,
+        jobUrl,
+        recruiterEmail: heuristic.recruiterEmail,
+      },
+      match: {
+        matchScore: null,
+        strongSkills: [] as string[],
+        missingSkills: [] as string[],
+      },
+      email: { subject, content },
+      lowMatch: false,
+      matchThreshold: LOW_MATCH_THRESHOLD,
+      emailConfigured: this.email.isConfigured(),
+    };
+  }
+
   async confirmSession(userId: string, dto: GoalSessionConfirmDto) {
     if (dto.skipApply) {
       return { skipped: true, message: 'Application skipped due to low match score' };
@@ -304,7 +396,16 @@ export class GoalsService {
     let jobUrl = dto.jobUrl;
     let recruiterEmail = dto.recruiterEmail;
 
-    if (!companyName || !position) {
+    const missingDetails =
+      !companyName ||
+      !position ||
+      companyName === 'Unknown Company' ||
+      position === 'Unknown Position';
+
+    if (missingDetails) {
+      if (dto.manual) {
+        throw new BadRequestException('Enter company name and job title before confirming');
+      }
       const parsed = await this.ai.parseJobDescription(dto.jobDescriptionText);
       companyName =
         companyName ||
@@ -313,6 +414,10 @@ export class GoalsService {
         position || (parsed.position !== 'Unknown Position' ? parsed.position : 'Unknown Position');
       jobUrl = jobUrl || parsed.jobUrl || undefined;
       recruiterEmail = recruiterEmail || parsed.recruiterEmail || undefined;
+    }
+
+    if (!companyName || !position) {
+      throw new BadRequestException('Company name and job title are required');
     }
 
     const resume = await this.prisma.document.findFirst({
@@ -331,7 +436,7 @@ export class GoalsService {
       status: ApplicationStatus.Applied,
     });
 
-    const [matchRecord, emailRecord, dailyGoal, reminder] = await Promise.all([
+    const matchPromise =
       dto.matchScore != null
         ? this.prisma.resumeAnalysis.create({
             data: {
@@ -346,7 +451,12 @@ export class GoalsService {
               suggestions: [],
             },
           })
-        : this.ai.matchResume(userId, resume.id, dto.jobDescriptionText, application.id),
+        : dto.manual
+          ? Promise.resolve(null)
+          : this.ai.matchResume(userId, resume.id, dto.jobDescriptionText, application.id);
+
+    const [matchRecord, emailRecord, dailyGoal, reminder] = await Promise.all([
+      matchPromise,
       this.prisma.applicationEmail.create({
         data: {
           userId,

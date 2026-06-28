@@ -19,6 +19,18 @@ export class GoalSessionPreviewDto {
   jobUrl?: string;
 }
 
+export class GoalSessionManualPreviewDto extends GoalSessionPreviewDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  companyName?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  position?: string;
+}
+
 export class GoalSessionConfirmDto {
   @ApiProperty({ enum: ResumeTrack })
   @IsEnum(ResumeTrack)
@@ -80,4 +92,9 @@ export class GoalSessionConfirmDto {
   @Min(0)
   @Max(100)
   matchScore?: number;
+
+  @ApiPropertyOptional({ description: 'Skip AI match analysis on confirm' })
+  @IsOptional()
+  @IsBoolean()
+  manual?: boolean;
 }

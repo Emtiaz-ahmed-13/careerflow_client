@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  DailyAiUsage: 'DailyAiUsage',
   UserGoal: 'UserGoal',
   JobApplication: 'JobApplication',
   Interview: 'Interview',
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userGoal" | "jobApplication" | "interview" | "document" | "reminder" | "resumeAnalysis" | "coverLetter" | "interviewQuestion" | "applicationEmail"
+    modelProps: "user" | "dailyAiUsage" | "userGoal" | "jobApplication" | "interview" | "document" | "reminder" | "resumeAnalysis" | "coverLetter" | "interviewQuestion" | "applicationEmail"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -484,6 +485,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    DailyAiUsage: {
+      payload: Prisma.$DailyAiUsagePayload<ExtArgs>
+      fields: Prisma.DailyAiUsageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DailyAiUsageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DailyAiUsageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>
+        }
+        findFirst: {
+          args: Prisma.DailyAiUsageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DailyAiUsageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>
+        }
+        findMany: {
+          args: Prisma.DailyAiUsageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>[]
+        }
+        create: {
+          args: Prisma.DailyAiUsageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>
+        }
+        createMany: {
+          args: Prisma.DailyAiUsageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DailyAiUsageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>[]
+        }
+        delete: {
+          args: Prisma.DailyAiUsageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>
+        }
+        update: {
+          args: Prisma.DailyAiUsageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>
+        }
+        deleteMany: {
+          args: Prisma.DailyAiUsageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DailyAiUsageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DailyAiUsageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>[]
+        }
+        upsert: {
+          args: Prisma.DailyAiUsageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyAiUsagePayload>
+        }
+        aggregate: {
+          args: Prisma.DailyAiUsageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDailyAiUsage>
+        }
+        groupBy: {
+          args: Prisma.DailyAiUsageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyAiUsageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DailyAiUsageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyAiUsageCountAggregateOutputType> | number
         }
       }
     }
@@ -1215,6 +1290,18 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const DailyAiUsageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  date: 'date',
+  count: 'count',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyAiUsageScalarFieldEnum = (typeof DailyAiUsageScalarFieldEnum)[keyof typeof DailyAiUsageScalarFieldEnum]
+
+
 export const UserGoalScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1698,6 +1785,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  dailyAiUsage?: Prisma.DailyAiUsageOmit
   userGoal?: Prisma.UserGoalOmit
   jobApplication?: Prisma.JobApplicationOmit
   interview?: Prisma.InterviewOmit

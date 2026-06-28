@@ -9,5 +9,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { createServer } = await import('../dist/serverless.js');
     server = await createServer();
   }
-  return server(req, res);
+  return server!(req, res);
 }

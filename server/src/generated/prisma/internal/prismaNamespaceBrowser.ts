@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  DailyAiUsage: 'DailyAiUsage',
   UserGoal: 'UserGoal',
   JobApplication: 'JobApplication',
   Interview: 'Interview',
@@ -100,6 +101,18 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const DailyAiUsageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  date: 'date',
+  count: 'count',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyAiUsageScalarFieldEnum = (typeof DailyAiUsageScalarFieldEnum)[keyof typeof DailyAiUsageScalarFieldEnum]
 
 
 export const UserGoalScalarFieldEnum = {

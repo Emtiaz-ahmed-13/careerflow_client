@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model DailyAiUsage
+ * 
+ */
+export type DailyAiUsage = Prisma.DailyAiUsageModel
+/**
  * Model UserGoal
  * 
  */

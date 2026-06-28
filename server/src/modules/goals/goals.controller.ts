@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { GoalSessionDto } from './dto/goal-session.dto';
-import { GoalSessionConfirmDto, GoalSessionPreviewDto } from './dto/goal-session-preview.dto';
+import { GoalSessionConfirmDto, GoalSessionManualPreviewDto, GoalSessionPreviewDto } from './dto/goal-session-preview.dto';
 import { SetCommitmentDto } from './dto/set-commitment.dto';
 import { GoalsService } from './goals.service';
 
@@ -47,6 +47,11 @@ export class GoalsController {
   @Post('session/preview')
   preview(@CurrentUser() user: { id: string }, @Body() dto: GoalSessionPreviewDto) {
     return this.goals.previewSession(user.id, dto);
+  }
+
+  @Post('session/manual-preview')
+  manualPreview(@CurrentUser() user: { id: string }, @Body() dto: GoalSessionManualPreviewDto) {
+    return this.goals.manualPreviewSession(user.id, dto);
   }
 
   @Post('session/confirm')

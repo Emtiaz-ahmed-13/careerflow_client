@@ -286,6 +286,7 @@ export type UserWhereInput = {
   interviewQuestions?: Prisma.InterviewQuestionListRelationFilter
   applicationEmails?: Prisma.ApplicationEmailListRelationFilter
   goal?: Prisma.XOR<Prisma.UserGoalNullableScalarRelationFilter, Prisma.UserGoalWhereInput> | null
+  dailyAiUsage?: Prisma.DailyAiUsageListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -314,6 +315,7 @@ export type UserOrderByWithRelationInput = {
   interviewQuestions?: Prisma.InterviewQuestionOrderByRelationAggregateInput
   applicationEmails?: Prisma.ApplicationEmailOrderByRelationAggregateInput
   goal?: Prisma.UserGoalOrderByWithRelationInput
+  dailyAiUsage?: Prisma.DailyAiUsageOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -345,6 +347,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   interviewQuestions?: Prisma.InterviewQuestionListRelationFilter
   applicationEmails?: Prisma.ApplicationEmailListRelationFilter
   goal?: Prisma.XOR<Prisma.UserGoalNullableScalarRelationFilter, Prisma.UserGoalWhereInput> | null
+  dailyAiUsage?: Prisma.DailyAiUsageListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -419,6 +422,7 @@ export type UserCreateInput = {
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -447,6 +451,7 @@ export type UserUncheckedCreateInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -475,6 +480,7 @@ export type UserUpdateInput = {
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -503,6 +509,7 @@ export type UserUncheckedUpdateInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -642,6 +649,20 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type UserCreateNestedOneWithoutDailyAiUsageInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDailyAiUsageInput, Prisma.UserUncheckedCreateWithoutDailyAiUsageInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDailyAiUsageInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDailyAiUsageNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDailyAiUsageInput, Prisma.UserUncheckedCreateWithoutDailyAiUsageInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDailyAiUsageInput
+  upsert?: Prisma.UserUpsertWithoutDailyAiUsageInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDailyAiUsageInput, Prisma.UserUpdateWithoutDailyAiUsageInput>, Prisma.UserUncheckedUpdateWithoutDailyAiUsageInput>
+}
+
 export type UserCreateNestedOneWithoutGoalInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutGoalInput, Prisma.UserUncheckedCreateWithoutGoalInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutGoalInput
@@ -754,6 +775,134 @@ export type UserUpdateOneRequiredWithoutApplicationEmailsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApplicationEmailsInput, Prisma.UserUpdateWithoutApplicationEmailsInput>, Prisma.UserUncheckedUpdateWithoutApplicationEmailsInput>
 }
 
+export type UserCreateWithoutDailyAiUsageInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  headline?: string | null
+  phone: string
+  location?: string | null
+  linkedinUrl: string
+  githubUrl: string
+  avatarUrl?: string | null
+  avatarFileId?: string | null
+  emailStyle?: string | null
+  coverLetterStyle?: string | null
+  refreshTokenHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  applications?: Prisma.JobApplicationCreateNestedManyWithoutUserInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutUserInput
+  reminders?: Prisma.ReminderCreateNestedManyWithoutUserInput
+  resumeAnalyses?: Prisma.ResumeAnalysisCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
+  applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
+  goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDailyAiUsageInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  headline?: string | null
+  phone: string
+  location?: string | null
+  linkedinUrl: string
+  githubUrl: string
+  avatarUrl?: string | null
+  avatarFileId?: string | null
+  emailStyle?: string | null
+  coverLetterStyle?: string | null
+  refreshTokenHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  applications?: Prisma.JobApplicationUncheckedCreateNestedManyWithoutUserInput
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutUserInput
+  reminders?: Prisma.ReminderUncheckedCreateNestedManyWithoutUserInput
+  resumeAnalyses?: Prisma.ResumeAnalysisUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
+  applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
+  goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDailyAiUsageInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDailyAiUsageInput, Prisma.UserUncheckedCreateWithoutDailyAiUsageInput>
+}
+
+export type UserUpsertWithoutDailyAiUsageInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDailyAiUsageInput, Prisma.UserUncheckedUpdateWithoutDailyAiUsageInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDailyAiUsageInput, Prisma.UserUncheckedCreateWithoutDailyAiUsageInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDailyAiUsageInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDailyAiUsageInput, Prisma.UserUncheckedUpdateWithoutDailyAiUsageInput>
+}
+
+export type UserUpdateWithoutDailyAiUsageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedinUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  githubUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverLetterStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  applications?: Prisma.JobApplicationUpdateManyWithoutUserNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutUserNestedInput
+  reminders?: Prisma.ReminderUpdateManyWithoutUserNestedInput
+  resumeAnalyses?: Prisma.ResumeAnalysisUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
+  applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
+  goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDailyAiUsageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedinUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  githubUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverLetterStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  applications?: Prisma.JobApplicationUncheckedUpdateManyWithoutUserNestedInput
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutUserNestedInput
+  reminders?: Prisma.ReminderUncheckedUpdateManyWithoutUserNestedInput
+  resumeAnalyses?: Prisma.ResumeAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
+  applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
+  goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+}
+
 export type UserCreateWithoutGoalInput = {
   id?: string
   email: string
@@ -779,6 +928,7 @@ export type UserCreateWithoutGoalInput = {
   coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGoalInput = {
@@ -806,6 +956,7 @@ export type UserUncheckedCreateWithoutGoalInput = {
   coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGoalInput = {
@@ -849,6 +1000,7 @@ export type UserUpdateWithoutGoalInput = {
   coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGoalInput = {
@@ -876,6 +1028,7 @@ export type UserUncheckedUpdateWithoutGoalInput = {
   coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplicationsInput = {
@@ -903,6 +1056,7 @@ export type UserCreateWithoutApplicationsInput = {
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplicationsInput = {
@@ -930,6 +1084,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplicationsInput = {
@@ -973,6 +1128,7 @@ export type UserUpdateWithoutApplicationsInput = {
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationsInput = {
@@ -1000,6 +1156,7 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDocumentsInput = {
@@ -1027,6 +1184,7 @@ export type UserCreateWithoutDocumentsInput = {
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDocumentsInput = {
@@ -1054,6 +1212,7 @@ export type UserUncheckedCreateWithoutDocumentsInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDocumentsInput = {
@@ -1097,6 +1256,7 @@ export type UserUpdateWithoutDocumentsInput = {
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDocumentsInput = {
@@ -1124,6 +1284,7 @@ export type UserUncheckedUpdateWithoutDocumentsInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRemindersInput = {
@@ -1151,6 +1312,7 @@ export type UserCreateWithoutRemindersInput = {
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRemindersInput = {
@@ -1178,6 +1340,7 @@ export type UserUncheckedCreateWithoutRemindersInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRemindersInput = {
@@ -1221,6 +1384,7 @@ export type UserUpdateWithoutRemindersInput = {
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRemindersInput = {
@@ -1248,6 +1412,7 @@ export type UserUncheckedUpdateWithoutRemindersInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutResumeAnalysesInput = {
@@ -1275,6 +1440,7 @@ export type UserCreateWithoutResumeAnalysesInput = {
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutResumeAnalysesInput = {
@@ -1302,6 +1468,7 @@ export type UserUncheckedCreateWithoutResumeAnalysesInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutResumeAnalysesInput = {
@@ -1345,6 +1512,7 @@ export type UserUpdateWithoutResumeAnalysesInput = {
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutResumeAnalysesInput = {
@@ -1372,6 +1540,7 @@ export type UserUncheckedUpdateWithoutResumeAnalysesInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCoverLettersInput = {
@@ -1399,6 +1568,7 @@ export type UserCreateWithoutCoverLettersInput = {
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCoverLettersInput = {
@@ -1426,6 +1596,7 @@ export type UserUncheckedCreateWithoutCoverLettersInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCoverLettersInput = {
@@ -1469,6 +1640,7 @@ export type UserUpdateWithoutCoverLettersInput = {
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCoverLettersInput = {
@@ -1496,6 +1668,7 @@ export type UserUncheckedUpdateWithoutCoverLettersInput = {
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutInterviewQuestionsInput = {
@@ -1523,6 +1696,7 @@ export type UserCreateWithoutInterviewQuestionsInput = {
   coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInterviewQuestionsInput = {
@@ -1550,6 +1724,7 @@ export type UserUncheckedCreateWithoutInterviewQuestionsInput = {
   coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInterviewQuestionsInput = {
@@ -1593,6 +1768,7 @@ export type UserUpdateWithoutInterviewQuestionsInput = {
   coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInterviewQuestionsInput = {
@@ -1620,6 +1796,7 @@ export type UserUncheckedUpdateWithoutInterviewQuestionsInput = {
   coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
   applicationEmails?: Prisma.ApplicationEmailUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplicationEmailsInput = {
@@ -1647,6 +1824,7 @@ export type UserCreateWithoutApplicationEmailsInput = {
   coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
   interviewQuestions?: Prisma.InterviewQuestionCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplicationEmailsInput = {
@@ -1674,6 +1852,7 @@ export type UserUncheckedCreateWithoutApplicationEmailsInput = {
   coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
   interviewQuestions?: Prisma.InterviewQuestionUncheckedCreateNestedManyWithoutUserInput
   goal?: Prisma.UserGoalUncheckedCreateNestedOneWithoutUserInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplicationEmailsInput = {
@@ -1717,6 +1896,7 @@ export type UserUpdateWithoutApplicationEmailsInput = {
   coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
   interviewQuestions?: Prisma.InterviewQuestionUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationEmailsInput = {
@@ -1744,6 +1924,7 @@ export type UserUncheckedUpdateWithoutApplicationEmailsInput = {
   coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
   interviewQuestions?: Prisma.InterviewQuestionUncheckedUpdateManyWithoutUserNestedInput
   goal?: Prisma.UserGoalUncheckedUpdateOneWithoutUserNestedInput
+  dailyAiUsage?: Prisma.DailyAiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1759,6 +1940,7 @@ export type UserCountOutputType = {
   coverLetters: number
   interviewQuestions: number
   applicationEmails: number
+  dailyAiUsage: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1769,6 +1951,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   coverLetters?: boolean | UserCountOutputTypeCountCoverLettersArgs
   interviewQuestions?: boolean | UserCountOutputTypeCountInterviewQuestionsArgs
   applicationEmails?: boolean | UserCountOutputTypeCountApplicationEmailsArgs
+  dailyAiUsage?: boolean | UserCountOutputTypeCountDailyAiUsageArgs
 }
 
 /**
@@ -1830,6 +2013,13 @@ export type UserCountOutputTypeCountApplicationEmailsArgs<ExtArgs extends runtim
   where?: Prisma.ApplicationEmailWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDailyAiUsageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DailyAiUsageWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1857,6 +2047,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   interviewQuestions?: boolean | Prisma.User$interviewQuestionsArgs<ExtArgs>
   applicationEmails?: boolean | Prisma.User$applicationEmailsArgs<ExtArgs>
   goal?: boolean | Prisma.User$goalArgs<ExtArgs>
+  dailyAiUsage?: boolean | Prisma.User$dailyAiUsageArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1930,6 +2121,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   interviewQuestions?: boolean | Prisma.User$interviewQuestionsArgs<ExtArgs>
   applicationEmails?: boolean | Prisma.User$applicationEmailsArgs<ExtArgs>
   goal?: boolean | Prisma.User$goalArgs<ExtArgs>
+  dailyAiUsage?: boolean | Prisma.User$dailyAiUsageArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1946,6 +2138,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     interviewQuestions: Prisma.$InterviewQuestionPayload<ExtArgs>[]
     applicationEmails: Prisma.$ApplicationEmailPayload<ExtArgs>[]
     goal: Prisma.$UserGoalPayload<ExtArgs> | null
+    dailyAiUsage: Prisma.$DailyAiUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2367,6 +2560,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   interviewQuestions<T extends Prisma.User$interviewQuestionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$interviewQuestionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applicationEmails<T extends Prisma.User$applicationEmailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicationEmailsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationEmailPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   goal<T extends Prisma.User$goalArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$goalArgs<ExtArgs>>): Prisma.Prisma__UserGoalClient<runtime.Types.Result.GetResult<Prisma.$UserGoalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  dailyAiUsage<T extends Prisma.User$dailyAiUsageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dailyAiUsageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailyAiUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2990,6 +3184,30 @@ export type User$goalArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs 
    */
   include?: Prisma.UserGoalInclude<ExtArgs> | null
   where?: Prisma.UserGoalWhereInput
+}
+
+/**
+ * User.dailyAiUsage
+ */
+export type User$dailyAiUsageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DailyAiUsage
+   */
+  select?: Prisma.DailyAiUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DailyAiUsage
+   */
+  omit?: Prisma.DailyAiUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DailyAiUsageInclude<ExtArgs> | null
+  where?: Prisma.DailyAiUsageWhereInput
+  orderBy?: Prisma.DailyAiUsageOrderByWithRelationInput | Prisma.DailyAiUsageOrderByWithRelationInput[]
+  cursor?: Prisma.DailyAiUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DailyAiUsageScalarFieldEnum | Prisma.DailyAiUsageScalarFieldEnum[]
 }
 
 /**

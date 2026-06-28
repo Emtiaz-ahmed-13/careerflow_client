@@ -54,6 +54,55 @@ export class LlmService {
     );
   }
 
+  /**
+   * Escapes raw control characters (newlines, tabs) that appear *inside* JSON
+   * string values. LLMs frequently return multi-line content (e.g. emails and
+   * cover letters with paragraph breaks) as literal newlines, which is invalid
+   * JSON and makes JSON.parse throw. This makes the payload parseable.
+   */
+  private sanitizeJson(raw: string): string {
+    let out = '';
+    let inString = false;
+    let escaped = false;
+    for (let i = 0; i < raw.length; i++) {
+      const ch = raw[i];
+      if (inString) {
+        if (escaped) {
+          out += ch;
+          escaped = false;
+          continue;
+        }
+        if (ch === '\\') {
+          out += ch;
+          escaped = true;
+          continue;
+        }
+        if (ch === '"') {
+          out += ch;
+          inString = false;
+          continue;
+        }
+        if (ch === '\n') {
+          out += '\\n';
+          continue;
+        }
+        if (ch === '\r') {
+          out += '\\r';
+          continue;
+        }
+        if (ch === '\t') {
+          out += '\\t';
+          continue;
+        }
+        out += ch;
+      } else {
+        if (ch === '"') inString = true;
+        out += ch;
+      }
+    }
+    return out;
+  }
+
   private async generateJson<T>(
     prompt: string,
     opts?: { maxTokens?: number; model?: string },
@@ -67,11 +116,46 @@ export class LlmService {
       if (!jsonMatch) {
         throw new Error('AI did not return valid JSON');
       }
-      return JSON.parse(jsonMatch[0]) as T;
+      try {
+        return JSON.parse(jsonMatch[0]) as T;
+      } catch {
+        return JSON.parse(this.sanitizeJson(jsonMatch[0])) as T;
+      }
     } catch (err) {
       if (err instanceof ServiceUnavailableException) throw err;
       this.aiUnavailable(err);
     }
+  }
+
+  private async callProvider(
+    prompt: string,
+    maxTokens: number,
+    model?: string,
+  ): Promise<string> {
+    if (this.provider === 'groq' && this.groq) {
+      const completion = await this.groq.chat.completions.create({
+        model: model ?? this.groqModel,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.4,
+        max_tokens: maxTokens,
+      });
+      return completion.choices[0]?.message?.content ?? '';
+    }
+
+    if (this.provider === 'anthropic' && this.anthropic) {
+      const message = await this.anthropic.messages.create({
+        model: model ?? this.anthropicModel,
+        max_tokens: maxTokens,
+        messages: [{ role: 'user', content: prompt }],
+      });
+      const block = message.content[0];
+      if (block.type !== 'text') throw new Error('Unexpected AI response type');
+      return block.text;
+    }
+
+    if (!this.geminiModel) throw new Error('Gemini not configured');
+    const result = await this.geminiModel.generateContent(prompt);
+    return result.response.text();
   }
 
   private async generateText(
@@ -79,35 +163,30 @@ export class LlmService {
     opts?: { maxTokens?: number; model?: string },
   ): Promise<string> {
     const maxTokens = opts?.maxTokens ?? 2048;
-    try {
-      if (this.provider === 'groq' && this.groq) {
-        const completion = await this.groq.chat.completions.create({
-          model: opts?.model ?? this.groqModel,
-          messages: [{ role: 'user', content: prompt }],
-          temperature: 0.4,
-          max_tokens: maxTokens,
-        });
-        return completion.choices[0]?.message?.content ?? '';
-      }
+    const maxAttempts = 3;
+    let lastErr: unknown;
 
-      if (this.provider === 'anthropic' && this.anthropic) {
-        const message = await this.anthropic.messages.create({
-          model: opts?.model ?? this.anthropicModel,
-          max_tokens: maxTokens,
-          messages: [{ role: 'user', content: prompt }],
-        });
-        const block = message.content[0];
-        if (block.type !== 'text') throw new Error('Unexpected AI response type');
-        return block.text;
-      }
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await this.callProvider(prompt, maxTokens, opts?.model);
+      } catch (err) {
+        lastErr = err;
+        const detail = err instanceof Error ? err.message : String(err);
 
-      if (!this.geminiModel) throw new Error('Gemini not configured');
-      const result = await this.geminiModel.generateContent(prompt);
-      return result.response.text();
-    } catch (err) {
-      if (err instanceof ServiceUnavailableException) throw err;
-      this.aiUnavailable(err);
+        // Don't waste retries on rate limits — surface a clear message immediately.
+        if (/429|rate.?limit|rate_limit|quota/i.test(detail)) break;
+
+        if (attempt < maxAttempts) {
+          const backoffMs = 400 * attempt;
+          this.logger.warn(
+            `AI attempt ${attempt}/${maxAttempts} failed (${detail}); retrying in ${backoffMs}ms`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, backoffMs));
+        }
+      }
     }
+
+    this.aiUnavailable(lastErr);
   }
 
   analyzeResumeMatch(resumeText: string, jobDescription: string) {
@@ -122,10 +201,10 @@ export class LlmService {
 Return ONLY valid JSON with keys: matchScore (0-100 number), strongSkills (string[]), missingSkills (string[]), weakAreas (string[]), suggestions (string[]).
 
 Resume:
-${resumeText.slice(0, 8000)}
+${resumeText.slice(0, 4500)}
 
 Job Description:
-${jobDescription.slice(0, 8000)}`,
+${jobDescription.slice(0, 4500)}`,
       { maxTokens: 1024 },
     );
   }
@@ -188,7 +267,7 @@ Email: ${userInfo.email}, Phone: ${userInfo.phone}
 LinkedIn: ${userInfo.linkedinUrl}, GitHub: ${userInfo.githubUrl}
 
 Job Description:
-${jobDescription.slice(0, 6000)}`,
+${jobDescription.slice(0, 4000)}`,
       { maxTokens: 1536 },
     );
   }
