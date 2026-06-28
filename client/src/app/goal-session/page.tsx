@@ -86,6 +86,9 @@ export default function GoalSessionPage() {
     RESUME_TRACKS.map((t) => [t, !!vault?.resumes[t]]),
   ) as Record<ResumeTrack, boolean>;
 
+  const aiLimitReached =
+    dailyGoal?.aiAppliesRemaining != null && dailyGoal.aiAppliesRemaining <= 0;
+
   const uploadResume = async (resumeTrack: ResumeTrack, file: File) => {
     if (!file.name.toLowerCase().endsWith(".pdf")) {
       return toast.error("Only PDF files — export your resume as .pdf from Word or Google Docs");
@@ -348,14 +351,39 @@ export default function GoalSessionPage() {
           fetchingUrl={fetchingUrl}
         />
 
-        <Button variant="lime" className="w-full" onClick={runPreview} disabled={previewing || confirming}>
+        {dailyGoal?.aiAppliesLimit != null && (
+          <div className="neo-border flex items-center justify-between bg-white px-3 py-2 text-xs font-bold">
+            <span>AI applies today</span>
+            <span className={aiLimitReached ? "text-red-600" : ""}>
+              {dailyGoal.aiAppliesUsed ?? 0}/{dailyGoal.aiAppliesLimit} used
+              {aiLimitReached ? " — resets at midnight (BD time)" : ` · ${dailyGoal.aiAppliesRemaining} left`}
+            </span>
+          </div>
+        )}
+
+        <Button
+          variant="lime"
+          className="w-full"
+          onClick={runPreview}
+          disabled={previewing || confirming || aiLimitReached}
+        >
           <Zap className="h-4 w-4" />
-          {previewing ? "AI analyzing..." : "Preview Session (match + email)"}
+          {previewing
+            ? "AI analyzing..."
+            : aiLimitReached
+              ? "Daily AI limit reached (4/day)"
+              : "Preview Session (match + email)"}
         </Button>
 
         <Button variant="white" className="w-full" onClick={runManualPreview} disabled={previewing || confirming}>
           {previewing ? "Loading..." : "Manual Apply (no AI)"}
         </Button>
+
+        {aiLimitReached && !preview && (
+          <p className="neo-border bg-[var(--color-yellow)] p-3 text-sm font-bold">
+            You&apos;ve used all 4 AI applies for today. Use <strong>Manual Apply</strong> to log jobs without AI, or come back after midnight (Bangladesh time).
+          </p>
+        )}
 
         {offerManual && !preview && (
           <p className="neo-border bg-[var(--color-yellow)] p-3 text-sm font-bold">

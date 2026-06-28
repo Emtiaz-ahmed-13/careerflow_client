@@ -36,6 +36,9 @@ export type DailyGoal = {
   commitmentActive: boolean;
   startedAt: string;
   message: string;
+  aiAppliesUsed?: number;
+  aiAppliesLimit?: number;
+  aiAppliesRemaining?: number;
 };
 
 export const COMMITMENT_OPTIONS = [7, 14, 30, 60, 90] as const;
