@@ -56,6 +56,13 @@ export type GoalSessionPreview = {
   lowMatch: boolean;
   matchThreshold: number;
   emailConfigured: boolean;
+  duplicateWarning?: {
+    applicationId: string;
+    companyName: string;
+    position: string;
+    appliedAt: string;
+    status: string;
+  } | null;
 };
 
 export type GoalSessionResult = {

@@ -1,16 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Copy, Mail, Send, Upload, Zap } from "lucide-react";
 import { DashboardLayout, PageHeader } from "@/components/layout/sidebar";
 import { GoalStreakCard } from "@/components/shared/goal-streak-card";
+import { DuplicateWarningBanner } from "@/components/shared/duplicate-warning-banner";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Card, Textarea } from "@/components/ui/input";
 import { JobPastePanel } from "@/components/shared/job-paste-panel";
 import { JobPasteGuide, useExtensionJobImport } from "@/components/shared/job-paste-guide";
 import { Tag } from "@/components/shared/tag";
 import { api, uploadFile } from "@/lib/api/client";
+import {
+  findDuplicateApplication,
+  findDuplicateInText,
+  type DuplicateWarning,
+} from "@/lib/duplicate-application";
 import { toast } from "@/lib/toast";
 import { copyToClipboard, openEmailComposer, previewErrorMessage } from "@/lib/utils";
 import type {
@@ -18,6 +25,7 @@ import type {
   DailyGoal,
   GoalSessionPreview,
   GoalSessionResult,
+  JobApplication,
   ResumeDocument,
   ResumeTrack,
 } from "@/types";
@@ -48,6 +56,7 @@ export default function GoalSessionPage() {
   const [result, setResult] = useState<GoalSessionResult | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [duplicateWarning, setDuplicateWarning] = useState<DuplicateWarning | null>(null);
 
   const handleExtensionImport = useCallback((job: { url: string; description: string; title: string; company: string }) => {
     setJobUrl(job.url ?? "");
@@ -81,6 +90,31 @@ export default function GoalSessionPage() {
     queryKey: ["resume-vault"],
     queryFn: () => api<ResumeVault>("/goals/resumes"),
   });
+
+  const { data: existingApps = [] } = useQuery({
+    queryKey: ["applications"],
+    queryFn: () => api<JobApplication[]>("/applications"),
+  });
+
+  useEffect(() => {
+    if (!jobDescription.trim() || jobDescription.length < 30) {
+      setDuplicateWarning(null);
+      return;
+    }
+    const timer = setTimeout(() => {
+      const fromText = findDuplicateInText(existingApps, jobDescription);
+      if (fromText) {
+        setDuplicateWarning(fromText);
+        return;
+      }
+      if (companyName.trim()) {
+        setDuplicateWarning(findDuplicateApplication(existingApps, companyName, position || undefined));
+      } else {
+        setDuplicateWarning(null);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [jobDescription, companyName, position, existingApps]);
 
   const trackReady = Object.fromEntries(
     RESUME_TRACKS.map((t) => [t, !!vault?.resumes[t]]),
@@ -159,6 +193,7 @@ export default function GoalSessionPage() {
     setEmailSubject(data.email?.subject ?? "");
     setEmailContent(data.email?.content ?? "");
     if (data.parsed.recruiterEmail) setRecruiterEmail(data.parsed.recruiterEmail);
+    if (data.duplicateWarning) setDuplicateWarning(data.duplicateWarning);
     setOfferManual(false);
   };
 
@@ -186,6 +221,8 @@ export default function GoalSessionPage() {
         }),
       });
       applyPreview(data);
+      const dup = findDuplicateApplication(existingApps, data.parsed.companyName, data.parsed.position);
+      if (dup) setDuplicateWarning(dup);
       toast.success("Manual mode — fill company & title, edit email, then confirm");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Manual preview failed");
@@ -216,7 +253,9 @@ export default function GoalSessionPage() {
         }),
       });
       applyPreview(data);
-      if (data.lowMatch) {
+      if (data.duplicateWarning) {
+        toast.warning(`Duplicate: you already applied to ${data.duplicateWarning.companyName}`);
+      } else if (data.lowMatch) {
         toast.warning(`Low match (${data.match.matchScore}%) — review before applying`);
       } else {
         toast.success(`Match ${data.match.matchScore}% — edit & confirm below`);
@@ -314,7 +353,7 @@ export default function GoalSessionPage() {
             const doc = vault?.resumes[t];
             const active = track === t;
             return (
-              <Card key={t} className={active ? "bg-[var(--color-lime)] ring-2 ring-black" : "bg-white"}>
+              <Card key={t} className={active ? "bg-[var(--color-lime)] ring-2 ring-[var(--color-border)]" : "chip-inactive"}>
                 <p className="neo-heading text-xs">{RESUME_TRACK_LABELS[t]}</p>
                 <p className="mt-2 text-xs font-medium">{doc ? `✓ ${doc.fileName}` : "No resume yet"}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -351,8 +390,12 @@ export default function GoalSessionPage() {
           fetchingUrl={fetchingUrl}
         />
 
+        {duplicateWarning && (
+          <DuplicateWarningBanner duplicate={duplicateWarning} />
+        )}
+
         {dailyGoal?.aiAppliesLimit != null && (
-          <div className="neo-border flex items-center justify-between bg-white px-3 py-2 text-xs font-bold">
+          <div className="neo-border flex items-center justify-between bg-[var(--color-card)] px-3 py-2 text-xs font-bold">
             <span>AI applies today</span>
             <span className={aiLimitReached ? "text-red-600" : ""}>
               {dailyGoal.aiAppliesUsed ?? 0}/{dailyGoal.aiAppliesLimit} used
@@ -393,12 +436,12 @@ export default function GoalSessionPage() {
       </section>
 
       {preview && !result && (
-        <section id="goal-session-preview" className="space-y-4 border-t-[3px] border-black pt-8">
+        <section id="goal-session-preview" className="space-y-4 border-t-[3px] border-[var(--color-border)] pt-8">
           <div>
             <h2 className="neo-heading text-lg">
               Step 2 — {preview.manual ? "Fill details & confirm" : "Edit email & confirm"}
             </h2>
-            <p className="mt-1 text-sm font-medium text-neutral-600">
+            <p className="mt-1 text-sm font-medium text-muted">
               {preview.manual
                 ? "No AI — edit company, title, email, then confirm"
                 : "Edit the email, then Confirm Apply"}
@@ -412,11 +455,11 @@ export default function GoalSessionPage() {
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <div>
                   <Label>Company</Label>
-                  <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="mt-1 bg-white" placeholder="Acme Corp" />
+                  <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="mt-1" placeholder="Acme Corp" />
                 </div>
                 <div>
                   <Label>Job title</Label>
-                  <Input value={position} onChange={(e) => setPosition(e.target.value)} className="mt-1 bg-white" placeholder="Senior Backend Engineer" />
+                  <Input value={position} onChange={(e) => setPosition(e.target.value)} className="mt-1" placeholder="Senior Backend Engineer" />
                 </div>
               </div>
             </Card>
@@ -442,29 +485,29 @@ export default function GoalSessionPage() {
             </Card>
             )}
 
-            <Card className={`bg-white ${preview.manual ? "lg:col-span-2" : ""}`}>
+            <Card className={`${preview.manual ? "lg:col-span-2" : ""}`}>
               <Label>Recruiter Email</Label>
-              <Input value={recruiterEmail} onChange={(e) => setRecruiterEmail(e.target.value)} className="mt-2 bg-white" placeholder="hr@company.com" type="email" />
+              <Input value={recruiterEmail} onChange={(e) => setRecruiterEmail(e.target.value)} className="mt-2" placeholder="hr@company.com" type="email" />
               {preview.emailConfigured ? (
                 <p className="mt-2 text-xs font-bold text-green-800">Direct email enabled — add a recruiter email to send straight from Goal Session</p>
               ) : (
-                <p className="mt-2 text-xs font-medium text-neutral-600">No recruiter email? You can still send manually via your mail app</p>
+                <p className="mt-2 text-xs font-medium text-muted">No recruiter email? You can still send manually via your mail app</p>
               )}
             </Card>
           </div>
 
-          <Card className="bg-white">
+          <Card className="">
             <div className="mb-2 flex items-center justify-between">
               <Label>Email — edit before send</Label>
               <Button variant="yellow" size="sm" onClick={() => { copyToClipboard(`Subject: ${emailSubject}\n\n${emailContent}`); toast.success("Copied!"); }}>
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
-            <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} className="mb-2 bg-white" placeholder="Subject" />
+            <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} className="mb-2 bg-surface" placeholder="Subject" />
             <Textarea
               value={emailContent}
               onChange={(e) => setEmailContent(e.target.value)}
-              className="min-h-[180px] bg-white text-sm"
+              className="min-h-[180px] bg-surface text-sm"
               placeholder="AI email body will appear here — click and edit..."
             />
           </Card>
@@ -503,7 +546,7 @@ export default function GoalSessionPage() {
       )}
 
       {result && !result.skipped && result.application && (
-        <section className="mt-8 space-y-4 border-t-[3px] border-black pt-8">
+        <section className="mt-8 space-y-4 border-t-[3px] border-[var(--color-border)] pt-8">
           <Card className="bg-[var(--color-lime)]">
             <p className="neo-heading text-xs">Logged as Applied</p>
             <p className="mt-1 font-bold">{result.application.position} @ {result.application.companyName}</p>

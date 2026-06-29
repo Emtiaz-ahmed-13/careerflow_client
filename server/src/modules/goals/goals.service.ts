@@ -309,6 +309,11 @@ export class GoalsService {
 
     await this.aiQuota.consume(userId);
 
+    const duplicateWarning =
+      companyName !== 'Unknown Company'
+        ? await this.applications.findDuplicate(userId, companyName, position)
+        : null;
+
     return {
       jobDescriptionText,
       jobUrl: jobUrl ?? parsed.jobUrl,
@@ -325,6 +330,7 @@ export class GoalsService {
       lowMatch: match.matchScore < LOW_MATCH_THRESHOLD,
       matchThreshold: LOW_MATCH_THRESHOLD,
       emailConfigured: this.email.isConfigured(),
+      duplicateWarning,
     };
   }
 

@@ -2,6 +2,25 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/database/prisma.service';
 import { CreateApplicationDto, UpdateApplicationDto, UpdateStatusDto } from './dto/application.dto';
 
+function normalize(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function companiesMatch(a: string, b: string) {
+  const na = normalize(a);
+  const nb = normalize(b);
+  if (!na || !nb || na === 'unknowncompany' || nb === 'unknowncompany') return false;
+  return na === nb || na.includes(nb) || nb.includes(na);
+}
+
+function positionsMatch(a?: string, b?: string) {
+  if (!a?.trim() || !b?.trim()) return true;
+  const na = normalize(a);
+  const nb = normalize(b);
+  if (!na || !nb || na === 'unknownposition' || nb === 'unknownposition') return true;
+  return na === nb || na.includes(nb) || nb.includes(na);
+}
+
 @Injectable()
 export class ApplicationsService {
   constructor(private prisma: PrismaService) {}
@@ -35,6 +54,28 @@ export class ApplicationsService {
         },
       },
     });
+  }
+
+  async findDuplicate(userId: string, companyName: string, position?: string) {
+    const apps = await this.prisma.jobApplication.findMany({
+      where: { userId },
+      select: { id: true, companyName: true, position: true, createdAt: true, status: true },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const match = apps.find(
+      (app) => companiesMatch(app.companyName, companyName) && positionsMatch(position, app.position),
+    );
+
+    if (!match) return null;
+
+    return {
+      applicationId: match.id,
+      companyName: match.companyName,
+      position: match.position,
+      appliedAt: match.createdAt.toISOString(),
+      status: match.status,
+    };
   }
 
   async findOne(userId: string, id: string) {

@@ -12,6 +12,15 @@ import { CreateApplicationDto, UpdateApplicationDto, UpdateStatusDto } from './d
 export class ApplicationsController {
   constructor(private apps: ApplicationsService) {}
 
+  @Get('check-duplicate')
+  checkDuplicate(
+    @CurrentUser() user: { id: string },
+    @Query('companyName') companyName: string,
+    @Query('position') position?: string,
+  ) {
+    return this.apps.findDuplicate(user.id, companyName ?? '', position);
+  }
+
   @Get()
   findAll(
     @CurrentUser() user: { id: string },
