@@ -46,6 +46,8 @@ export type JobApplicationMinAggregateOutputType = {
   notes: string | null
   status: $Enums.ApplicationStatus | null
   jobDescriptionText: string | null
+  rejectionLetter: string | null
+  rejectedAt: Date | null
   kanbanOrder: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,6 +65,8 @@ export type JobApplicationMaxAggregateOutputType = {
   notes: string | null
   status: $Enums.ApplicationStatus | null
   jobDescriptionText: string | null
+  rejectionLetter: string | null
+  rejectedAt: Date | null
   kanbanOrder: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -80,6 +84,8 @@ export type JobApplicationCountAggregateOutputType = {
   notes: number
   status: number
   jobDescriptionText: number
+  rejectionLetter: number
+  rejectedAt: number
   kanbanOrder: number
   createdAt: number
   updatedAt: number
@@ -107,6 +113,8 @@ export type JobApplicationMinAggregateInputType = {
   notes?: true
   status?: true
   jobDescriptionText?: true
+  rejectionLetter?: true
+  rejectedAt?: true
   kanbanOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -124,6 +132,8 @@ export type JobApplicationMaxAggregateInputType = {
   notes?: true
   status?: true
   jobDescriptionText?: true
+  rejectionLetter?: true
+  rejectedAt?: true
   kanbanOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -141,6 +151,8 @@ export type JobApplicationCountAggregateInputType = {
   notes?: true
   status?: true
   jobDescriptionText?: true
+  rejectionLetter?: true
+  rejectedAt?: true
   kanbanOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -245,6 +257,8 @@ export type JobApplicationGroupByOutputType = {
   notes: string | null
   status: $Enums.ApplicationStatus
   jobDescriptionText: string | null
+  rejectionLetter: string | null
+  rejectedAt: Date | null
   kanbanOrder: number
   createdAt: Date
   updatedAt: Date
@@ -285,6 +299,8 @@ export type JobApplicationWhereInput = {
   notes?: Prisma.StringNullableFilter<"JobApplication"> | string | null
   status?: Prisma.EnumApplicationStatusFilter<"JobApplication"> | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.StringNullableFilter<"JobApplication"> | string | null
+  rejectionLetter?: Prisma.StringNullableFilter<"JobApplication"> | string | null
+  rejectedAt?: Prisma.DateTimeNullableFilter<"JobApplication"> | Date | string | null
   kanbanOrder?: Prisma.IntFilter<"JobApplication"> | number
   createdAt?: Prisma.DateTimeFilter<"JobApplication"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobApplication"> | Date | string
@@ -310,6 +326,8 @@ export type JobApplicationOrderByWithRelationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   jobDescriptionText?: Prisma.SortOrderInput | Prisma.SortOrder
+  rejectionLetter?: Prisma.SortOrderInput | Prisma.SortOrder
+  rejectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   kanbanOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -338,6 +356,8 @@ export type JobApplicationWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.StringNullableFilter<"JobApplication"> | string | null
   status?: Prisma.EnumApplicationStatusFilter<"JobApplication"> | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.StringNullableFilter<"JobApplication"> | string | null
+  rejectionLetter?: Prisma.StringNullableFilter<"JobApplication"> | string | null
+  rejectedAt?: Prisma.DateTimeNullableFilter<"JobApplication"> | Date | string | null
   kanbanOrder?: Prisma.IntFilter<"JobApplication"> | number
   createdAt?: Prisma.DateTimeFilter<"JobApplication"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobApplication"> | Date | string
@@ -363,6 +383,8 @@ export type JobApplicationOrderByWithAggregationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   jobDescriptionText?: Prisma.SortOrderInput | Prisma.SortOrder
+  rejectionLetter?: Prisma.SortOrderInput | Prisma.SortOrder
+  rejectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   kanbanOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -388,6 +410,8 @@ export type JobApplicationScalarWhereWithAggregatesInput = {
   notes?: Prisma.StringNullableWithAggregatesFilter<"JobApplication"> | string | null
   status?: Prisma.EnumApplicationStatusWithAggregatesFilter<"JobApplication"> | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.StringNullableWithAggregatesFilter<"JobApplication"> | string | null
+  rejectionLetter?: Prisma.StringNullableWithAggregatesFilter<"JobApplication"> | string | null
+  rejectedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"JobApplication"> | Date | string | null
   kanbanOrder?: Prisma.IntWithAggregatesFilter<"JobApplication"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"JobApplication"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"JobApplication"> | Date | string
@@ -404,6 +428,8 @@ export type JobApplicationCreateInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -429,6 +455,8 @@ export type JobApplicationUncheckedCreateInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -452,6 +480,8 @@ export type JobApplicationUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -477,6 +507,8 @@ export type JobApplicationUncheckedUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -501,6 +533,8 @@ export type JobApplicationCreateManyInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -517,6 +551,8 @@ export type JobApplicationUpdateManyMutationInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -534,6 +570,8 @@ export type JobApplicationUncheckedUpdateManyInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -561,6 +599,8 @@ export type JobApplicationCountOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
   jobDescriptionText?: Prisma.SortOrder
+  rejectionLetter?: Prisma.SortOrder
+  rejectedAt?: Prisma.SortOrder
   kanbanOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -582,6 +622,8 @@ export type JobApplicationMaxOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
   jobDescriptionText?: Prisma.SortOrder
+  rejectionLetter?: Prisma.SortOrder
+  rejectedAt?: Prisma.SortOrder
   kanbanOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -599,6 +641,8 @@ export type JobApplicationMinOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
   jobDescriptionText?: Prisma.SortOrder
+  rejectionLetter?: Prisma.SortOrder
+  rejectedAt?: Prisma.SortOrder
   kanbanOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -789,6 +833,8 @@ export type JobApplicationCreateWithoutUserInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -812,6 +858,8 @@ export type JobApplicationUncheckedCreateWithoutUserInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -865,6 +913,8 @@ export type JobApplicationScalarWhereInput = {
   notes?: Prisma.StringNullableFilter<"JobApplication"> | string | null
   status?: Prisma.EnumApplicationStatusFilter<"JobApplication"> | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.StringNullableFilter<"JobApplication"> | string | null
+  rejectionLetter?: Prisma.StringNullableFilter<"JobApplication"> | string | null
+  rejectedAt?: Prisma.DateTimeNullableFilter<"JobApplication"> | Date | string | null
   kanbanOrder?: Prisma.IntFilter<"JobApplication"> | number
   createdAt?: Prisma.DateTimeFilter<"JobApplication"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobApplication"> | Date | string
@@ -881,6 +931,8 @@ export type JobApplicationCreateWithoutInterviewsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -905,6 +957,8 @@ export type JobApplicationUncheckedCreateWithoutInterviewsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -943,6 +997,8 @@ export type JobApplicationUpdateWithoutInterviewsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -967,6 +1023,8 @@ export type JobApplicationUncheckedUpdateWithoutInterviewsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -989,6 +1047,8 @@ export type JobApplicationCreateWithoutDocumentsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1013,6 +1073,8 @@ export type JobApplicationUncheckedCreateWithoutDocumentsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1051,6 +1113,8 @@ export type JobApplicationUpdateWithoutDocumentsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1075,6 +1139,8 @@ export type JobApplicationUncheckedUpdateWithoutDocumentsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1097,6 +1163,8 @@ export type JobApplicationCreateWithoutRemindersInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1121,6 +1189,8 @@ export type JobApplicationUncheckedCreateWithoutRemindersInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1159,6 +1229,8 @@ export type JobApplicationUpdateWithoutRemindersInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1183,6 +1255,8 @@ export type JobApplicationUncheckedUpdateWithoutRemindersInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1205,6 +1279,8 @@ export type JobApplicationCreateWithoutResumeAnalysesInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1229,6 +1305,8 @@ export type JobApplicationUncheckedCreateWithoutResumeAnalysesInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1267,6 +1345,8 @@ export type JobApplicationUpdateWithoutResumeAnalysesInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1291,6 +1371,8 @@ export type JobApplicationUncheckedUpdateWithoutResumeAnalysesInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1313,6 +1395,8 @@ export type JobApplicationCreateWithoutCoverLettersInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1337,6 +1421,8 @@ export type JobApplicationUncheckedCreateWithoutCoverLettersInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1375,6 +1461,8 @@ export type JobApplicationUpdateWithoutCoverLettersInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1399,6 +1487,8 @@ export type JobApplicationUncheckedUpdateWithoutCoverLettersInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1421,6 +1511,8 @@ export type JobApplicationCreateWithoutInterviewQuestionsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1445,6 +1537,8 @@ export type JobApplicationUncheckedCreateWithoutInterviewQuestionsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1483,6 +1577,8 @@ export type JobApplicationUpdateWithoutInterviewQuestionsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1507,6 +1603,8 @@ export type JobApplicationUncheckedUpdateWithoutInterviewQuestionsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1529,6 +1627,8 @@ export type JobApplicationCreateWithoutApplicationEmailsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1553,6 +1653,8 @@ export type JobApplicationUncheckedCreateWithoutApplicationEmailsInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1591,6 +1693,8 @@ export type JobApplicationUpdateWithoutApplicationEmailsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1615,6 +1719,8 @@ export type JobApplicationUncheckedUpdateWithoutApplicationEmailsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1637,6 +1743,8 @@ export type JobApplicationCreateManyUserInput = {
   notes?: string | null
   status?: $Enums.ApplicationStatus
   jobDescriptionText?: string | null
+  rejectionLetter?: string | null
+  rejectedAt?: Date | string | null
   kanbanOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1653,6 +1761,8 @@ export type JobApplicationUpdateWithoutUserInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1676,6 +1786,8 @@ export type JobApplicationUncheckedUpdateWithoutUserInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1699,6 +1811,8 @@ export type JobApplicationUncheckedUpdateManyWithoutUserInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
   jobDescriptionText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectionLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kanbanOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1801,6 +1915,8 @@ export type JobApplicationSelect<ExtArgs extends runtime.Types.Extensions.Intern
   notes?: boolean
   status?: boolean
   jobDescriptionText?: boolean
+  rejectionLetter?: boolean
+  rejectedAt?: boolean
   kanbanOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1827,6 +1943,8 @@ export type JobApplicationSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   notes?: boolean
   status?: boolean
   jobDescriptionText?: boolean
+  rejectionLetter?: boolean
+  rejectedAt?: boolean
   kanbanOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1845,6 +1963,8 @@ export type JobApplicationSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   notes?: boolean
   status?: boolean
   jobDescriptionText?: boolean
+  rejectionLetter?: boolean
+  rejectedAt?: boolean
   kanbanOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1863,12 +1983,14 @@ export type JobApplicationSelectScalar = {
   notes?: boolean
   status?: boolean
   jobDescriptionText?: boolean
+  rejectionLetter?: boolean
+  rejectedAt?: boolean
   kanbanOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type JobApplicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "position" | "jobUrl" | "salary" | "location" | "deadline" | "notes" | "status" | "jobDescriptionText" | "kanbanOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["jobApplication"]>
+export type JobApplicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "position" | "jobUrl" | "salary" | "location" | "deadline" | "notes" | "status" | "jobDescriptionText" | "rejectionLetter" | "rejectedAt" | "kanbanOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["jobApplication"]>
 export type JobApplicationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   interviews?: boolean | Prisma.JobApplication$interviewsArgs<ExtArgs>
@@ -1911,6 +2033,8 @@ export type $JobApplicationPayload<ExtArgs extends runtime.Types.Extensions.Inte
     notes: string | null
     status: $Enums.ApplicationStatus
     jobDescriptionText: string | null
+    rejectionLetter: string | null
+    rejectedAt: Date | null
     kanbanOrder: number
     createdAt: Date
     updatedAt: Date
@@ -2356,6 +2480,8 @@ export interface JobApplicationFieldRefs {
   readonly notes: Prisma.FieldRef<"JobApplication", 'String'>
   readonly status: Prisma.FieldRef<"JobApplication", 'ApplicationStatus'>
   readonly jobDescriptionText: Prisma.FieldRef<"JobApplication", 'String'>
+  readonly rejectionLetter: Prisma.FieldRef<"JobApplication", 'String'>
+  readonly rejectedAt: Prisma.FieldRef<"JobApplication", 'DateTime'>
   readonly kanbanOrder: Prisma.FieldRef<"JobApplication", 'Int'>
   readonly createdAt: Prisma.FieldRef<"JobApplication", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"JobApplication", 'DateTime'>

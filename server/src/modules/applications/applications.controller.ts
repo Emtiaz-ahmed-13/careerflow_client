@@ -13,8 +13,12 @@ export class ApplicationsController {
   constructor(private apps: ApplicationsService) {}
 
   @Get()
-  findAll(@CurrentUser() user: { id: string }, @Query('status') status?: string) {
-    return this.apps.findAll(user.id, status);
+  findAll(
+    @CurrentUser() user: { id: string },
+    @Query('status') status?: string,
+    @Query('search') search?: string,
+  ) {
+    return this.apps.findAll(user.id, status, search);
   }
 
   @Get(':id')

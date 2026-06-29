@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowLeft, Calendar, Copy, Mail, Trash2, Pencil, Check, Clock,
+  ArrowLeft, Calendar, Copy, Mail, Trash2, Pencil, Check, Clock, MailX, XCircle,
 } from "lucide-react";
 import { DashboardLayout, PageHeader } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ function ApplicationDetailContent() {
     status: "Applied" as ApplicationStatus,
     emailSubject: "",
     emailContent: "",
+    rejectionLetter: "",
   });
 
   const { data: app, isLoading } = useQuery({
@@ -56,6 +57,7 @@ function ApplicationDetailContent() {
         status: app.status,
         emailSubject: app.applicationEmails?.[0]?.subject ?? "",
         emailContent: app.applicationEmails?.[0]?.content ?? "",
+        rejectionLetter: app.rejectionLetter ?? "",
       });
     }
   }, [app]);
@@ -75,6 +77,10 @@ function ApplicationDetailContent() {
           status: form.status,
           emailSubject: form.emailSubject || undefined,
           emailContent: form.emailContent || undefined,
+          rejectionLetter: form.rejectionLetter || undefined,
+          ...(form.status === "Rejected" && !app?.rejectedAt
+            ? { rejectedAt: new Date().toISOString() }
+            : {}),
         }),
       }),
     onSuccess: () => {
@@ -110,6 +116,15 @@ function ApplicationDetailContent() {
     { date: app.createdAt, label: "Applied", detail: `${app.position} @ ${app.companyName}` },
     ...(email?.createdAt ? [{ date: email.createdAt, label: "Email saved", detail: email.subject }] : []),
     ...(match?.createdAt ? [{ date: match.createdAt, label: "Match analyzed", detail: `${match.matchScore}% match` }] : []),
+    ...(app.rejectedAt
+      ? [{
+          date: app.rejectedAt,
+          label: "Rejected",
+          detail: app.rejectionLetter
+            ? "Rejection letter saved"
+            : "Status updated to Rejected",
+        }]
+      : []),
     ...(app.reminders?.map((r) => ({
       date: r.remindAt,
       label: r.isCompleted ? "Follow-up done" : "Follow-up scheduled",
@@ -193,14 +208,81 @@ function ApplicationDetailContent() {
               </div>
             </div>
           )}
+          <div>
+            <Label className="flex items-center gap-2">
+              <MailX className="h-4 w-4" /> Rejection letter
+            </Label>
+            <p className="mt-1 text-xs font-medium text-neutral-600">
+              Paste the rejection email you received. Set status to Rejected to save.
+            </p>
+            <Textarea
+              value={form.rejectionLetter}
+              onChange={(e) => setForm({ ...form, rejectionLetter: e.target.value, status: e.target.value.trim() ? "Rejected" : form.status })}
+              className="mt-2 min-h-[200px] bg-white text-sm whitespace-pre-wrap"
+              placeholder="Dear Applicant,&#10;&#10;Thank you for applying..."
+            />
+          </div>
         </Card>
       ) : (
-        app.jobDescriptionText && (
-          <Card className="mb-8 bg-white">
-            <h2 className="neo-heading text-sm">Job Description</h2>
-            <div className="neo-border mt-3 max-h-48 overflow-y-auto bg-[#f3f3f3] p-4 text-sm whitespace-pre-wrap">{app.jobDescriptionText}</div>
-          </Card>
-        )
+        <>
+          {app.jobDescriptionText && (
+            <Card className="mb-8 bg-white">
+              <h2 className="neo-heading text-sm">Job Description</h2>
+              <div className="neo-border mt-3 max-h-48 overflow-y-auto bg-[#f3f3f3] p-4 text-sm whitespace-pre-wrap">{app.jobDescriptionText}</div>
+            </Card>
+          )}
+
+          {(app.status === "Rejected" || app.rejectionLetter) && (
+            <Card className="mb-8 bg-[var(--color-pink)]">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="neo-heading flex items-center gap-2 text-sm">
+                  <XCircle className="h-4 w-4" /> Rejection
+                </h2>
+                <div className="flex gap-2">
+                  {app.rejectionLetter && (
+                    <Button variant="white" size="sm" onClick={() => { copyToClipboard(app.rejectionLetter!); toast.success("Copied!"); }}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button variant="yellow" size="sm" onClick={() => setEditing(true)}>
+                    <Pencil className="h-4 w-4" /> {app.rejectionLetter ? "Edit letter" : "Add letter"}
+                  </Button>
+                </div>
+              </div>
+              {app.rejectedAt && (
+                <p className="text-xs font-bold uppercase text-neutral-700">
+                  Rejected on {new Date(app.rejectedAt).toLocaleDateString()}
+                </p>
+              )}
+              {app.rejectionLetter ? (
+                <div className="neo-border mt-3 max-h-72 overflow-y-auto bg-white p-4 text-sm whitespace-pre-wrap">
+                  {app.rejectionLetter}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm font-medium">No rejection letter saved yet — click Edit to paste the email you received.</p>
+              )}
+            </Card>
+          )}
+
+          {app.status !== "Rejected" && !app.rejectionLetter && (
+            <Card className="mb-8 flex flex-wrap items-center justify-between gap-4 bg-white">
+              <div>
+                <p className="neo-heading text-sm">Got a rejection?</p>
+                <p className="text-xs font-medium text-neutral-600">Paste the email and mark this application as rejected.</p>
+              </div>
+              <Button
+                variant="pink"
+                size="sm"
+                onClick={() => {
+                  setForm((f) => ({ ...f, status: "Rejected" }));
+                  setEditing(true);
+                }}
+              >
+                <XCircle className="h-4 w-4" /> Mark as Rejected
+              </Button>
+            </Card>
+          )}
+        </>
       )}
 
       <div className="grid gap-6 lg:grid-cols-2">

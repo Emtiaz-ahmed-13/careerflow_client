@@ -1327,6 +1327,8 @@ export const JobApplicationScalarFieldEnum = {
   notes: 'notes',
   status: 'status',
   jobDescriptionText: 'jobDescriptionText',
+  rejectionLetter: 'rejectionLetter',
+  rejectedAt: 'rejectedAt',
   kanbanOrder: 'kanbanOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

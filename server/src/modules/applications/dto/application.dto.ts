@@ -12,6 +12,8 @@ export class CreateApplicationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() jobDescriptionText?: string;
   @ApiPropertyOptional() @IsOptional() @IsEnum(ApplicationStatus) status?: ApplicationStatus;
+  @ApiPropertyOptional() @IsOptional() @IsString() rejectionLetter?: string;
+  @ApiPropertyOptional() @IsOptional() @IsDateString() rejectedAt?: string;
 }
 
 export class UpdateApplicationDto {
@@ -27,6 +29,8 @@ export class UpdateApplicationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() coverLetterContent?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() emailSubject?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() emailContent?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() rejectionLetter?: string;
+  @ApiPropertyOptional() @IsOptional() @IsDateString() rejectedAt?: string;
 }
 
 export class UpdateStatusDto {

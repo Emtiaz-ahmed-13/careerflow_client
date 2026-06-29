@@ -107,6 +107,8 @@ export type JobApplication = {
   notes?: string;
   status: ApplicationStatus;
   jobDescriptionText?: string;
+  rejectionLetter?: string | null;
+  rejectedAt?: string | null;
   kanbanOrder: number;
   createdAt: string;
   coverLetters?: { id: string; content: string; createdAt?: string }[];

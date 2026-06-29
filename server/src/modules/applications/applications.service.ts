@@ -6,9 +6,15 @@ import { CreateApplicationDto, UpdateApplicationDto, UpdateStatusDto } from './d
 export class ApplicationsService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(userId: string, status?: string) {
+  findAll(userId: string, status?: string, search?: string) {
     return this.prisma.jobApplication.findMany({
-      where: { userId, ...(status ? { status: status as any } : {}) },
+      where: {
+        userId,
+        ...(status ? { status: status as any } : {}),
+        ...(search?.trim()
+          ? { companyName: { contains: search.trim(), mode: 'insensitive' as const } }
+          : {}),
+      },
       orderBy: [{ kanbanOrder: 'asc' }, { createdAt: 'desc' }],
       include: {
         coverLetters: {
@@ -73,12 +79,22 @@ export class ApplicationsService {
     await this.findOne(userId, id);
     const { coverLetterContent, emailSubject, emailContent, ...appFields } = dto;
 
+    const data: Record<string, unknown> = {
+      ...appFields,
+      deadline: appFields.deadline ? new Date(appFields.deadline) : undefined,
+    };
+    if (appFields.rejectedAt) {
+      data.rejectedAt = new Date(appFields.rejectedAt);
+    } else if (appFields.status === 'Rejected' && !appFields.rejectedAt) {
+      data.rejectedAt = new Date();
+    }
+    if (appFields.status && appFields.status !== 'Rejected') {
+      data.rejectedAt = null;
+    }
+
     const app = await this.prisma.jobApplication.update({
       where: { id },
-      data: {
-        ...appFields,
-        deadline: appFields.deadline ? new Date(appFields.deadline) : undefined,
-      },
+      data: data as any,
     });
 
     if (coverLetterContent != null) {
