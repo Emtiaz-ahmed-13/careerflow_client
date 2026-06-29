@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Moon, Sun } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
+import { useTheme } from "@/providers/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Card } from "@/components/ui/input";
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [form, setForm] = useState({
     email: "", password: "", firstName: "", lastName: "",
     phone: "", linkedinUrl: "", githubUrl: "", headline: "", location: "",
@@ -32,10 +35,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f3f3f3] p-4">
-      <Card className="w-full max-w-lg bg-white">
+    <div className="relative flex min-h-screen items-center justify-center bg-app p-4">
+      <Button
+        variant="white"
+        size="sm"
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        className="absolute right-4 top-4"
+      >
+        {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      </Button>
+      <Card className="w-full max-w-lg">
         <h1 className="neo-heading text-2xl">Create Account</h1>
-        <p className="mt-2 text-xs font-bold uppercase tracking-wide text-neutral-600">
+        <p className="mt-2 text-xs font-bold uppercase tracking-wide text-muted">
           LinkedIn · GitHub · Email · Phone required
         </p>
         <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-2 gap-4">

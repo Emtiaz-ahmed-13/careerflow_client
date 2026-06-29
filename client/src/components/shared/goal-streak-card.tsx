@@ -36,7 +36,7 @@ export function GoalStreakCard({
             {goal.commitmentDaysHit} apply days · {goal.commitmentDaysRemaining} days left in challenge
           </p>
         </div>
-        <div className="neo-border bg-white px-4 py-3 text-center neo-shadow-sm">
+        <div className="neo-border bg-surface px-4 py-3 text-center neo-shadow-sm">
           <p className="text-[10px] font-black uppercase">Today</p>
           <p className="neo-heading text-3xl">{goal.met ? "✓" : "—"}</p>
           {(goal.appliesToday ?? goal.completedToday) > 0 && (
@@ -45,7 +45,7 @@ export function GoalStreakCard({
         </div>
       </div>
 
-      <div className="mt-4 neo-border h-3 overflow-hidden bg-white">
+      <div className="mt-4 neo-border h-3 overflow-hidden bg-surface">
         <div
           className="h-full bg-[var(--color-yellow)] transition-all"
           style={{ width: `${progress}%` }}
@@ -70,7 +70,7 @@ export function GoalStreakCard({
               </Button>
             ))}
           </div>
-          <p className="mt-2 text-xs font-medium text-neutral-700">
+          <p className="mt-2 text-xs font-medium text-muted">
             Selecting resets your {goal.commitmentDays}-day challenge from today.
           </p>
         </div>

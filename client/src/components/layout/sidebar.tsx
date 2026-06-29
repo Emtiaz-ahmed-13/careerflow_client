@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, Briefcase, Columns3, MessageSquare,
-  User, Settings, LogOut, Sparkles, Plus, UserCircle, Flame, Menu, X,
+  User, Settings, LogOut, Sparkles, Plus, UserCircle, Flame, Menu, X, Moon, Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
+import { useTheme } from "@/providers/theme-provider";
 import { api } from "@/lib/api/client";
 import { toast } from "@/lib/toast";
 import type { DailyGoal } from "@/types";
@@ -36,12 +37,16 @@ function SidebarContent({
   dailyGoal,
   onNavigate,
   onLogout,
+  onToggleTheme,
+  isDark,
 }: {
   pathname: string;
   user: { firstName: string; lastName: string; email: string } | null;
   dailyGoal?: DailyGoal;
   onNavigate?: () => void;
   onLogout: () => void;
+  onToggleTheme: () => void;
+  isDark: boolean;
 }) {
   const renderLink = (href: string, label: string, Icon: typeof LayoutDashboard) => {
     const active = pathname === href;
@@ -52,7 +57,7 @@ function SidebarContent({
         onClick={onNavigate}
         className={cn(
           "neo-border flex items-center gap-3 px-3 py-2.5 text-sm font-bold uppercase transition",
-          active ? "neo-shadow-sm bg-[var(--color-lime)]" : "bg-white hover:bg-neutral-100",
+          active ? "neo-shadow-sm bg-[var(--color-lime)]" : "bg-[var(--color-card)] hover:opacity-90",
         )}
       >
         <Icon className="h-4 w-4 shrink-0 stroke-[2.5]" />
@@ -63,7 +68,7 @@ function SidebarContent({
 
   return (
     <>
-      <div className="border-b-[3px] border-black p-5">
+      <div className="border-b-[3px] border-[var(--color-border)] p-5">
         <Link href="/dashboard" className="flex items-center gap-2" onClick={onNavigate}>
           <span className="neo-heading text-xl">CareerFlow</span>
           <span className="neo-border neo-shadow-sm bg-[var(--color-yellow)] px-2 py-0.5 text-xs font-black uppercase">Tracker</span>
@@ -105,7 +110,7 @@ function SidebarContent({
           {primaryNav.map(({ href, label, icon }) => renderLink(href, label, icon))}
         </div>
         <div>
-          <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-widest text-neutral-500">More</p>
+          <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-widest text-[var(--color-muted)]">More</p>
           <div className="space-y-2">
             {toolsNav.map(({ href, label, icon }) => renderLink(href, label, icon))}
             {accountNav.map(({ href, label, icon }) => renderLink(href, label, icon))}
@@ -113,13 +118,23 @@ function SidebarContent({
         </div>
       </nav>
 
-      <button
-        onClick={onLogout}
-        className="neo-border mx-4 mb-4 flex items-center gap-3 bg-[var(--color-pink)] px-4 py-3 text-sm font-black uppercase neo-shadow-sm transition hover:translate-x-[1px] hover:translate-y-[1px]"
-      >
-        <LogOut className="h-4 w-4 stroke-[2.5]" />
-        Logout
-      </button>
+      <div className="space-y-2 px-4 pb-4">
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          className="neo-border flex w-full items-center gap-3 bg-[var(--color-card)] px-4 py-3 text-sm font-black uppercase neo-shadow-sm transition hover:translate-x-[1px] hover:translate-y-[1px]"
+        >
+          {isDark ? <Sun className="h-4 w-4 stroke-[2.5]" /> : <Moon className="h-4 w-4 stroke-[2.5]" />}
+          {isDark ? "Light mode" : "Dark mode"}
+        </button>
+        <button
+          onClick={onLogout}
+          className="neo-border flex w-full items-center gap-3 bg-[var(--color-pink)] px-4 py-3 text-sm font-black uppercase neo-shadow-sm transition hover:translate-x-[1px] hover:translate-y-[1px]"
+        >
+          <LogOut className="h-4 w-4 stroke-[2.5]" />
+          Logout
+        </button>
+      </div>
     </>
   );
 }
@@ -127,6 +142,7 @@ function SidebarContent({
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: dailyGoal } = useQuery({
     queryKey: ["goals-today"],
@@ -160,7 +176,7 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-screen w-[280px] flex-col border-r-[3px] border-black bg-[#f3f3f3] transition-transform duration-200",
+          "fixed left-0 top-0 z-40 flex h-screen w-[280px] flex-col border-r-[3px] border-[var(--color-border)] bg-[var(--color-bg)] transition-transform duration-200",
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
@@ -170,6 +186,8 @@ export function Sidebar() {
           dailyGoal={dailyGoal}
           onNavigate={() => setMobileOpen(false)}
           onLogout={logout}
+          onToggleTheme={toggleTheme}
+          isDark={theme === "dark"}
         />
       </aside>
     </>
@@ -178,7 +196,7 @@ export function Sidebar() {
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#f3f3f3] md:pl-[280px]">
+    <div className="min-h-screen bg-[var(--color-bg)] md:pl-[280px]">
       <Sidebar />
       <main className="min-h-screen p-4 pt-16 md:p-8 md:pt-8">{children}</main>
     </div>
@@ -195,11 +213,11 @@ export function PageHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b-[3px] border-black pb-6">
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b-[3px] border-[var(--color-border)] pb-6">
       <div>
         <h1 className="neo-heading text-3xl md:text-4xl">{title}</h1>
         {subtitle && (
-          <p className="mt-2 text-sm font-medium uppercase tracking-wide text-neutral-600">{subtitle}</p>
+          <p className="mt-2 text-sm font-medium uppercase tracking-wide text-[var(--color-muted)]">{subtitle}</p>
         )}
       </div>
       {action}

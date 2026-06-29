@@ -108,7 +108,7 @@ export function JobPastePanel({
         <div>
           <Label>Resume type</Label>
           {suggestedTrack && suggestReason && (
-            <p className="mt-1 text-xs font-bold text-neutral-700">
+            <p className="mt-1 text-xs font-bold text-muted">
               AI suggests <span className="uppercase">{RESUME_TRACK_LABELS[suggestedTrack]}</span> — {suggestReason}
             </p>
           )}
@@ -142,7 +142,7 @@ export function JobPastePanel({
             value={jobUrl}
             onChange={(e) => onJobUrlChange?.(e.target.value)}
             placeholder="https://linkedin.com/jobs/view/..."
-            className="min-w-0 flex-1 bg-white"
+            className="min-w-0 flex-1 bg-surface"
           />
           {onTryFetchUrl && jobUrl.trim() && (
             <Button type="button" variant="yellow" size="sm" onClick={onTryFetchUrl} disabled={fetchingUrl || extracting}>
@@ -170,13 +170,13 @@ export function JobPastePanel({
         placeholder="Paste the FULL LinkedIn job post here (company, role, requirements)..."
         value={jobDescription}
         onChange={(e) => onJobDescriptionChange(e.target.value)}
-        className="min-h-[200px] bg-white font-mono text-sm"
+        className="min-h-[200px] bg-surface font-mono text-sm"
       />
 
       {!hideResumeUpload && (
         <div>
           <Label>Resume (PDF)</Label>
-          <label className="neo-border neo-shadow-sm mt-2 flex cursor-pointer items-center gap-3 bg-white p-4 font-bold uppercase transition hover:bg-neutral-50">
+          <label className="neo-border neo-shadow-sm mt-2 flex cursor-pointer items-center gap-3 bg-surface p-4 font-bold uppercase transition hover:bg-inset">
             <span className="text-sm">{uploading ? "Uploading..." : resumeId ? "Resume uploaded ✓" : "Upload resume PDF"}</span>
             <input type="file" accept=".pdf" className="hidden" onChange={handleResumeUpload} disabled={uploading} />
           </label>

@@ -33,10 +33,10 @@ function SortableCard({ app }: { app: JobApplication }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="neo-border neo-shadow-sm cursor-grab bg-white p-3 active:cursor-grabbing"
+      className="neo-border neo-shadow-sm cursor-grab bg-surface p-3 active:cursor-grabbing"
     >
       <p className="neo-heading text-xs leading-snug">{app.position}</p>
-      <p className="mt-1 text-[10px] font-bold uppercase text-neutral-600">{app.companyName}</p>
+      <p className="mt-1 text-[10px] font-bold uppercase text-muted">{app.companyName}</p>
     </div>
   );
 }
@@ -48,9 +48,9 @@ function DroppableColumn({ status, apps }: { status: ApplicationStatus; apps: Jo
   return (
     <div
       ref={setNodeRef}
-      className={`neo-border min-w-[220px] flex-1 p-3 transition ${isOver ? "bg-[var(--color-lime)]" : COLUMN_COLORS[status] ?? "bg-white"}`}
+      className={`neo-border min-w-[220px] flex-1 p-3 transition ${isOver ? "bg-[var(--color-lime)]" : COLUMN_COLORS[status] ?? "bg-surface"}`}
     >
-      <h3 className="neo-heading mb-3 text-xs">
+      <h3 className="neo-heading text-on-accent mb-3 text-xs">
         {STATUS_LABELS[status]} ({columnApps.length})
       </h3>
       <SortableContext items={columnApps.map((a) => a.id)} strategy={verticalListSortingStrategy}>
@@ -122,7 +122,7 @@ export default function KanbanPage() {
         </div>
         <DragOverlay>
           {activeApp && (
-            <div className="neo-border neo-shadow bg-white p-3">
+            <div className="neo-border neo-shadow bg-surface p-3">
               <p className="neo-heading text-xs">{activeApp.position}</p>
               <p className="text-[10px] font-bold uppercase">{activeApp.companyName}</p>
             </div>

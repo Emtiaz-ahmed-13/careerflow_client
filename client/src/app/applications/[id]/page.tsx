@@ -179,31 +179,31 @@ function ApplicationDetailContent() {
         <Card className="mb-8 space-y-4 bg-[var(--color-yellow)]">
           <h2 className="neo-heading text-sm">Edit Application</h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div><Label>Company *</Label><Input value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} className="mt-2 bg-white" /></div>
-            <div><Label>Position *</Label><Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} className="mt-2 bg-white" /></div>
+            <div><Label>Company *</Label><Input value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} className="mt-2" /></div>
+            <div><Label>Position *</Label><Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} className="mt-2" /></div>
             <div><Label>Status</Label>
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as ApplicationStatus })} className="neo-border mt-2 w-full bg-white p-2 text-sm font-bold">
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as ApplicationStatus })} className="neo-border mt-2 w-full bg-surface p-2 text-sm font-bold">
                 {STATUSES.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
               </select>
             </div>
-            <div><Label>Job URL</Label><Input value={form.jobUrl} onChange={(e) => setForm({ ...form, jobUrl: e.target.value })} className="mt-2 bg-white" /></div>
-            <div><Label>Salary</Label><Input value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} className="mt-2 bg-white" /></div>
-            <div><Label>Location</Label><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="mt-2 bg-white" /></div>
+            <div><Label>Job URL</Label><Input value={form.jobUrl} onChange={(e) => setForm({ ...form, jobUrl: e.target.value })} className="mt-2" /></div>
+            <div><Label>Salary</Label><Input value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} className="mt-2" /></div>
+            <div><Label>Location</Label><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="mt-2" /></div>
           </div>
-          <div><Label>Notes</Label><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="mt-2 bg-white" /></div>
-          <div><Label>Job Description</Label><Textarea value={form.jobDescriptionText} onChange={(e) => setForm({ ...form, jobDescriptionText: e.target.value })} className="mt-2 min-h-[160px] bg-white font-mono text-sm" /></div>
+          <div><Label>Notes</Label><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="mt-2" /></div>
+          <div><Label>Job Description</Label><Textarea value={form.jobDescriptionText} onChange={(e) => setForm({ ...form, jobDescriptionText: e.target.value })} className="mt-2 min-h-[160px] font-mono text-sm" /></div>
           {email && (
             <div className="space-y-3">
               <div>
                 <Label>Email Subject</Label>
-                <Input value={form.emailSubject} onChange={(e) => setForm({ ...form, emailSubject: e.target.value })} className="mt-2 bg-white" />
+                <Input value={form.emailSubject} onChange={(e) => setForm({ ...form, emailSubject: e.target.value })} className="mt-2" />
               </div>
               <div>
                 <Label>Email Body</Label>
                 <Textarea
                   value={form.emailContent}
                   onChange={(e) => setForm({ ...form, emailContent: e.target.value })}
-                  className="mt-2 min-h-[160px] bg-white text-sm"
+                  className="mt-2 min-h-[160px] bg-surface text-sm"
                 />
               </div>
             </div>
@@ -212,13 +212,13 @@ function ApplicationDetailContent() {
             <Label className="flex items-center gap-2">
               <MailX className="h-4 w-4" /> Rejection letter
             </Label>
-            <p className="mt-1 text-xs font-medium text-neutral-600">
+            <p className="mt-1 text-xs font-medium text-muted">
               Paste the rejection email you received. Set status to Rejected to save.
             </p>
             <Textarea
               value={form.rejectionLetter}
               onChange={(e) => setForm({ ...form, rejectionLetter: e.target.value, status: e.target.value.trim() ? "Rejected" : form.status })}
-              className="mt-2 min-h-[200px] bg-white text-sm whitespace-pre-wrap"
+              className="mt-2 min-h-[200px] bg-surface text-sm whitespace-pre-wrap"
               placeholder="Dear Applicant,&#10;&#10;Thank you for applying..."
             />
           </div>
@@ -226,9 +226,9 @@ function ApplicationDetailContent() {
       ) : (
         <>
           {app.jobDescriptionText && (
-            <Card className="mb-8 bg-white">
+            <Card className="mb-8 bg-surface">
               <h2 className="neo-heading text-sm">Job Description</h2>
-              <div className="neo-border mt-3 max-h-48 overflow-y-auto bg-[#f3f3f3] p-4 text-sm whitespace-pre-wrap">{app.jobDescriptionText}</div>
+              <div className="neo-border mt-3 max-h-48 overflow-y-auto bg-app p-4 text-sm whitespace-pre-wrap">{app.jobDescriptionText}</div>
             </Card>
           )}
 
@@ -250,12 +250,12 @@ function ApplicationDetailContent() {
                 </div>
               </div>
               {app.rejectedAt && (
-                <p className="text-xs font-bold uppercase text-neutral-700">
+                <p className="text-xs font-bold uppercase text-muted">
                   Rejected on {new Date(app.rejectedAt).toLocaleDateString()}
                 </p>
               )}
               {app.rejectionLetter ? (
-                <div className="neo-border mt-3 max-h-72 overflow-y-auto bg-white p-4 text-sm whitespace-pre-wrap">
+                <div className="neo-border mt-3 max-h-72 overflow-y-auto bg-surface p-4 text-sm whitespace-pre-wrap">
                   {app.rejectionLetter}
                 </div>
               ) : (
@@ -265,10 +265,10 @@ function ApplicationDetailContent() {
           )}
 
           {app.status !== "Rejected" && !app.rejectionLetter && (
-            <Card className="mb-8 flex flex-wrap items-center justify-between gap-4 bg-white">
+            <Card className="mb-8 flex flex-wrap items-center justify-between gap-4 bg-surface">
               <div>
                 <p className="neo-heading text-sm">Got a rejection?</p>
-                <p className="text-xs font-medium text-neutral-600">Paste the email and mark this application as rejected.</p>
+                <p className="text-xs font-medium text-muted">Paste the email and mark this application as rejected.</p>
               </div>
               <Button
                 variant="pink"
@@ -287,7 +287,7 @@ function ApplicationDetailContent() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {email && (
-          <Card className="bg-white">
+          <Card className="">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="neo-heading flex items-center gap-2 text-sm"><Mail className="h-4 w-4" /> Application Email</h2>
               <div className="flex gap-2">
@@ -300,7 +300,7 @@ function ApplicationDetailContent() {
               </div>
             </div>
             <p className="text-xs font-bold">Subject: {email.subject}</p>
-            <div className="neo-border mt-2 max-h-56 overflow-y-auto bg-white p-4 text-sm whitespace-pre-wrap">{email.content}</div>
+            <div className="neo-border mt-2 max-h-56 overflow-y-auto bg-surface p-4 text-sm whitespace-pre-wrap">{email.content}</div>
           </Card>
         )}
 
@@ -320,8 +320,8 @@ function ApplicationDetailContent() {
           <h2 className="neo-heading flex items-center gap-2 text-sm"><Clock className="h-4 w-4" /> Timeline</h2>
           <ul className="mt-4 space-y-3">
             {timeline.map((item, i) => (
-              <li key={i} className="neo-border flex gap-4 bg-white p-3">
-                <span className="shrink-0 text-xs font-black uppercase text-neutral-500">
+              <li key={i} className="neo-border flex gap-4 bg-surface p-3">
+                <span className="shrink-0 text-xs font-black uppercase text-[var(--color-muted)]">
                   {new Date(item.date).toLocaleDateString()}
                 </span>
                 <div>

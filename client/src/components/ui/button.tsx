@@ -11,9 +11,9 @@ export function Button({ className, variant = "lime", size = "md", ...props }: P
     lime: "neo-btn neo-btn-lime text-black",
     yellow: "neo-btn neo-btn-yellow text-black",
     pink: "neo-btn neo-btn-pink text-black",
-    white: "neo-btn neo-btn-white text-black",
-    cyan: "neo-btn neo-btn-cyan text-black",
-    outline: "neo-btn neo-btn-white text-black bg-white",
+    white: "neo-btn neo-btn-white",
+    cyan: "neo-btn neo-btn-cyan",
+    outline: "neo-btn neo-btn-white",
   };
   const sizes = {
     sm: "px-3 py-1.5 text-xs",

@@ -180,10 +180,10 @@ export default function OnboardingPage() {
         </div>
 
         <div className="mb-8 text-center">
-          <p className="text-xs font-black uppercase tracking-widest text-neutral-600">Welcome, {user?.firstName}</p>
+          <p className="text-xs font-black uppercase tracking-widest text-muted">Welcome, {user?.firstName}</p>
           <h1 className="neo-heading mt-2 text-3xl md:text-4xl">Get value in 5 minutes</h1>
           <p className="mt-2 text-sm font-medium">Set up once — then paste jobs and apply with AI every day.</p>
-          <p className="mt-1 text-xs font-medium text-neutral-500">Progress saves automatically if you leave.</p>
+          <p className="mt-1 text-xs font-medium text-[var(--color-muted)]">Progress saves automatically if you leave.</p>
         </div>
 
         <div className="mb-8 flex justify-center gap-2">
@@ -196,13 +196,13 @@ export default function OnboardingPage() {
             >
               <span
                 className={`neo-border flex h-8 w-8 items-center justify-center text-xs font-black ${
-                  i < step ? "bg-[var(--color-lime)]" : i === step ? "bg-[var(--color-cyan)]" : "bg-white"
+                  i < step ? "bg-[var(--color-lime)]" : i === step ? "bg-[var(--color-cyan)]" : "chip-inactive"
                 }`}
               >
                 {i < step ? <Check className="h-4 w-4" /> : i + 1}
               </span>
               <span className="hidden text-xs font-bold uppercase sm:inline">{label}</span>
-              {i < STEPS.length - 1 && <span className="text-neutral-400">→</span>}
+              {i < STEPS.length - 1 && <span className="text-faint">→</span>}
             </button>
           ))}
         </div>
@@ -218,7 +218,7 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={() => setCommitmentDays(d)}
                   className={`neo-border px-4 py-2 text-sm font-black uppercase transition ${
-                    commitmentDays === d ? "neo-shadow-sm bg-[var(--color-yellow)]" : "bg-white hover:bg-neutral-100"
+                    commitmentDays === d ? "neo-shadow-sm bg-[var(--color-yellow)]" : "bg-surface hover:bg-inset"
                   }`}
                 >
                   {d} days
@@ -243,7 +243,7 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={() => setTrack(t)}
                   className={`neo-border px-3 py-1.5 text-xs font-black uppercase ${
-                    track === t ? "bg-[var(--color-lime)]" : "bg-white"
+                    track === t ? "bg-[var(--color-lime)]" : "chip-inactive"
                   }`}
                 >
                   {RESUME_TRACK_LABELS[t]}
@@ -288,7 +288,7 @@ export default function OnboardingPage() {
             </Card>
 
             {preview && (
-              <Card className="bg-white text-center">
+              <Card className="text-center">
                 <p className="text-xs font-black uppercase">Your match score</p>
                 <p className="neo-heading text-5xl">{preview.match.matchScore}%</p>
                 <p className="mt-1 font-bold">{preview.parsed.position} @ {preview.parsed.companyName}</p>
@@ -297,7 +297,7 @@ export default function OnboardingPage() {
                     <Tag key={s} variant="lime">{s}</Tag>
                   ))}
                 </div>
-                <p className="mt-4 text-xs font-medium text-neutral-600">
+                <p className="mt-4 text-xs font-medium text-muted">
                   Real jobs work the same — plus cover letter, email, and one-click apply.
                 </p>
               </Card>

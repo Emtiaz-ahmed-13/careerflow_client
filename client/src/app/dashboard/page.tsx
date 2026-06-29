@@ -11,10 +11,22 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api/client";
 import { toast } from "@/lib/toast";
 import type { DashboardMetrics, DailyGoal, Reminder } from "@/types";
+import { useTheme } from "@/providers/theme-provider";
 
-const COLORS = ["#a3e635", "#22d3ee", "#fde047", "#fb923c", "#fb7185", "#000"];
+const COLORS = ["#a3e635", "#22d3ee", "#fde047", "#fb923c", "#fb7185", "#737373"];
 
 export default function DashboardPage() {
+  const { theme } = useTheme();
+  const chartStroke = theme === "dark" ? "#f5f5f5" : "#0a0a0a";
+  const chartTooltipStyle = {
+    border: `3px solid ${chartStroke}`,
+    background: theme === "dark" ? "#171717" : "#ffffff",
+    color: theme === "dark" ? "#f5f5f5" : "#0a0a0a",
+    fontWeight: 700 as const,
+    fontSize: 12,
+  };
+  const axisTick = { fontWeight: 700 as const, fontSize: 10, fill: chartStroke };
+
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard"],
@@ -65,17 +77,17 @@ export default function DashboardPage() {
 
       {dueReminders.length > 0 && (
         <Card className="mb-6 bg-[var(--color-yellow)]">
-          <h2 className="neo-heading flex items-center gap-2 text-sm">
+          <h2 className="neo-heading text-on-accent flex items-center gap-2 text-sm">
             <Bell className="h-4 w-4" /> Follow up today
           </h2>
           <ul className="mt-4 space-y-3">
             {dueReminders.map((r) => (
-              <li key={r.id} className="neo-border flex flex-wrap items-center justify-between gap-3 bg-white p-3">
+              <li key={r.id} className="neo-border flex flex-wrap items-center justify-between gap-3 bg-surface p-3">
                 <div>
                   <p className="font-black uppercase">
                     {r.application?.position ?? r.title} @ {r.application?.companyName ?? ""}
                   </p>
-                  <p className="text-xs font-medium text-neutral-600">{r.title}</p>
+                  <p className="text-xs font-medium text-muted">{r.title}</p>
                 </div>
                 <div className="flex gap-2">
                   {r.application?.id && (
@@ -119,7 +131,7 @@ export default function DashboardPage() {
         <>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {metrics.map((m) => (
-              <Card key={m.label} className={m.bg}>
+              <Card key={m.label} className={`${m.bg} text-on-accent`}>
                 <p className="text-xs font-black uppercase tracking-wide">{m.label}</p>
                 <p className="neo-heading mt-2 text-4xl">{m.value}</p>
               </Card>
@@ -131,10 +143,10 @@ export default function DashboardPage() {
               <h2 className="neo-heading mb-4 text-sm">Weekly Applies</h2>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={weeklyData}>
-                  <XAxis dataKey="week" tick={{ fontWeight: 700, fontSize: 10 }} />
-                  <YAxis allowDecimals={false} tick={{ fontWeight: 700, fontSize: 11 }} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#fde047" stroke="#000" strokeWidth={2} />
+                  <XAxis dataKey="week" tick={axisTick} />
+                  <YAxis allowDecimals={false} tick={{ ...axisTick, fontSize: 11 }} />
+                  <Tooltip contentStyle={chartTooltipStyle} />
+                  <Bar dataKey="count" fill="var(--color-yellow)" stroke={chartStroke} strokeWidth={2} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
@@ -142,10 +154,10 @@ export default function DashboardPage() {
               <h2 className="neo-heading mb-4 text-sm">Success Rates (%)</h2>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={rateData}>
-                  <XAxis dataKey="name" tick={{ fontWeight: 700, fontSize: 11 }} />
-                  <YAxis domain={[0, 100]} tick={{ fontWeight: 700, fontSize: 11 }} />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#a3e635" stroke="#000" strokeWidth={2} />
+                  <XAxis dataKey="name" tick={{ ...axisTick, fontSize: 11 }} />
+                  <YAxis domain={[0, 100]} tick={{ ...axisTick, fontSize: 11 }} />
+                  <Tooltip contentStyle={chartTooltipStyle} />
+                  <Bar dataKey="value" fill="var(--color-lime)" stroke={chartStroke} strokeWidth={2} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
@@ -153,12 +165,12 @@ export default function DashboardPage() {
               <h2 className="neo-heading mb-4 text-sm">By Status</h2>
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
-                  <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} stroke="#000" strokeWidth={2}>
+                  <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} stroke={chartStroke} strokeWidth={2}>
                     {statusData.map((_, i) => (
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip contentStyle={chartTooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             </Card>

@@ -17,6 +17,7 @@ import { api } from "@/lib/api/client";
 import { toast } from "@/lib/toast";
 import type { ApplicationStatus, JobApplication } from "@/types";
 import { STATUS_COLUMNS, STATUS_LABELS } from "@/types";
+import { useTheme } from "@/providers/theme-provider";
 
 const STATUS_COLORS: Record<ApplicationStatus, string> = {
   Applied: "#fde047",
@@ -30,6 +31,17 @@ const STATUS_COLORS: Record<ApplicationStatus, string> = {
 type RejectTarget = { id: string; companyName: string; position: string } | null;
 
 export default function ApplicationsPage() {
+  const { theme } = useTheme();
+  const chartStroke = theme === "dark" ? "#f5f5f5" : "#0a0a0a";
+  const chartTooltipStyle = {
+    border: `3px solid ${chartStroke}`,
+    background: theme === "dark" ? "#171717" : "#ffffff",
+    color: theme === "dark" ? "#f5f5f5" : "#0a0a0a",
+    fontWeight: 700 as const,
+    fontSize: 12,
+  };
+  const axisTick = { fontSize: 10, fontWeight: 700 as const, fill: chartStroke };
+
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
@@ -147,9 +159,9 @@ export default function ApplicationsPage() {
           { label: "Applied", value: appliedCount, bg: "bg-[var(--color-yellow)]" },
           { label: "Interviews", value: interviewCount, bg: "bg-[var(--color-lime)]" },
           { label: "Rejected", value: rejectedCount, bg: "bg-[var(--color-pink)]" },
-          { label: "Offers", value: offerCount, bg: "bg-[#86efac]" },
+          { label: "Offers", value: offerCount, bg: "bg-[var(--color-lime)]" },
         ].map((m) => (
-          <Card key={m.label} className={`${m.bg} text-center`}>
+          <Card key={m.label} className={`${m.bg} text-center text-on-accent`}>
             <p className="text-xs font-black uppercase">{m.label}</p>
             <p className="neo-heading mt-1 text-3xl">{m.value}</p>
           </Card>
@@ -158,7 +170,7 @@ export default function ApplicationsPage() {
 
       {total > 0 && (
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
-          <Card className="bg-white">
+          <Card className="">
             <h2 className="neo-heading mb-4 text-sm">Status breakdown</h2>
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -172,38 +184,36 @@ export default function ApplicationsPage() {
                     innerRadius={45}
                     outerRadius={75}
                     paddingAngle={2}
-                    stroke="#000"
+                    stroke={chartStroke}
                     strokeWidth={2}
                   >
                     {pieData.map((entry) => (
                       <Cell key={entry.status} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <Tooltip
-                    contentStyle={{ border: "3px solid #000", fontWeight: 700, fontSize: 12 }}
-                  />
+                  <Tooltip contentStyle={chartTooltipStyle} />
                   <Legend wrapperStyle={{ fontSize: 11, fontWeight: 700 }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </Card>
 
-          <Card className="bg-white">
+          <Card className="">
             <h2 className="neo-heading mb-4 text-sm">Applications by status</h2>
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={statusCounts} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                   <XAxis
                     dataKey="label"
-                    tick={{ fontSize: 10, fontWeight: 700 }}
+                    tick={axisTick}
                     interval={0}
                     angle={-25}
                     textAnchor="end"
                     height={50}
                   />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700 }} />
-                  <Tooltip contentStyle={{ border: "3px solid #000", fontWeight: 700, fontSize: 12 }} />
-                  <Bar dataKey="count" radius={[4, 4, 0, 0]} stroke="#000" strokeWidth={2}>
+                  <YAxis allowDecimals={false} tick={axisTick} />
+                  <Tooltip contentStyle={chartTooltipStyle} />
+                  <Bar dataKey="count" radius={[4, 4, 0, 0]} stroke={chartStroke} strokeWidth={2}>
                     {statusCounts.map((entry) => (
                       <Cell key={entry.status} fill={entry.fill} />
                     ))}
@@ -230,8 +240,8 @@ export default function ApplicationsPage() {
           <button
             type="button"
             onClick={() => setStatusFilter("All")}
-            className={`neo-border px-3 py-1 text-xs font-black uppercase shadow-[2px_2px_0_0_#000] ${
-              statusFilter === "All" ? "bg-black text-white" : "bg-white"
+            className={`neo-border neo-shadow-xs px-3 py-1 text-xs font-black uppercase ${
+              statusFilter === "All" ? "chip-active" : "chip-inactive"
             }`}
           >
             All ({total})
@@ -244,8 +254,8 @@ export default function ApplicationsPage() {
                 key={s}
                 type="button"
                 onClick={() => setStatusFilter(s)}
-                className={`neo-border px-3 py-1 text-xs font-black uppercase shadow-[2px_2px_0_0_#000] ${
-                  statusFilter === s ? "bg-black text-white" : "bg-white"
+                className={`neo-border neo-shadow-xs px-3 py-1 text-xs font-black uppercase ${
+                  statusFilter === s ? "chip-active" : "chip-inactive"
                 }`}
                 style={statusFilter !== s ? { backgroundColor: STATUS_COLORS[s] } : undefined}
               >
@@ -258,7 +268,7 @@ export default function ApplicationsPage() {
 
       {showForm && (
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
-          <Card className="space-y-4 bg-white">
+          <Card className="space-y-4 bg-surface">
             <h2 className="neo-heading text-sm">Application Details</h2>
             <div><Label>Company *</Label><Input value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} className="mt-2" /></div>
             <div><Label>Position *</Label><Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} className="mt-2" /></div>
@@ -297,12 +307,12 @@ export default function ApplicationsPage() {
           return (
             <Card
               key={app.id}
-              className={`flex flex-col ${isRejected ? "bg-[var(--color-pink)]/30 ring-2 ring-[var(--color-pink)]" : "bg-white"}`}
+              className={`flex flex-col ${isRejected ? "bg-[var(--color-pink)]/30 ring-2 ring-[var(--color-pink)]" : "chip-inactive"}`}
             >
               <Link href={`/applications/${app.id}`} className="group">
                 <h3 className="neo-heading text-base leading-snug group-hover:underline">{app.position}</h3>
               </Link>
-              <p className="mt-1 flex items-center gap-1 text-xs font-bold uppercase text-neutral-600">
+              <p className="mt-1 flex items-center gap-1 text-xs font-bold uppercase text-muted">
                 <Calendar className="h-3.5 w-3.5" />
                 Applied {new Date(app.createdAt).toLocaleDateString()}
                 {app.rejectedAt && (
@@ -351,12 +361,12 @@ export default function ApplicationsPage() {
       {/* Rejection modal */}
       {rejectTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto bg-white">
+          <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto bg-surface">
             <h2 className="neo-heading text-lg">Mark as Rejected</h2>
-            <p className="mt-1 text-sm font-medium text-neutral-600">
+            <p className="mt-1 text-sm font-medium text-muted">
               {rejectTarget.position} @ {rejectTarget.companyName}
             </p>
-            <p className="mt-3 text-xs font-bold uppercase text-neutral-500">
+            <p className="mt-3 text-xs font-bold uppercase text-[var(--color-muted)]">
               Paste the rejection email you received — it will be saved on this application.
             </p>
             <Textarea

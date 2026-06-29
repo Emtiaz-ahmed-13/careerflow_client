@@ -5,7 +5,7 @@ export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElem
   return (
     <input
       className={cn(
-        "neo-input flex h-11 w-full px-3 py-2 text-sm font-medium placeholder:text-neutral-500",
+        "neo-input flex h-11 w-full px-3 py-2 text-sm font-medium placeholder:text-[var(--color-muted)]",
         className,
       )}
       {...props}
@@ -17,7 +17,7 @@ export function Textarea({ className, ...props }: React.TextareaHTMLAttributes<H
   return (
     <textarea
       className={cn(
-        "neo-input block min-h-[140px] w-full resize-y px-3 py-2 text-sm font-medium placeholder:text-neutral-500",
+        "neo-input block min-h-[140px] w-full resize-y px-3 py-2 text-sm font-medium placeholder:text-[var(--color-muted)]",
         className,
       )}
       {...props}
@@ -28,7 +28,7 @@ export function Textarea({ className, ...props }: React.TextareaHTMLAttributes<H
 export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
-      className={cn("text-xs font-bold uppercase tracking-wide text-black", className)}
+      className={cn("text-xs font-bold uppercase tracking-wide text-[var(--color-foreground)]", className)}
       {...props}
     />
   );

@@ -27,7 +27,7 @@ export function JobPasteGuide({ onDismiss }: { onDismiss?: () => void }) {
       <button
         type="button"
         onClick={dismiss}
-        className="absolute right-3 top-3 neo-border bg-white p-1"
+        className="absolute right-3 top-3 neo-border bg-surface p-1"
         aria-label="Dismiss guide"
       >
         <X className="h-4 w-4" />
@@ -39,8 +39,8 @@ export function JobPasteGuide({ onDismiss }: { onDismiss?: () => void }) {
             <Chrome className="h-4 w-4" />
             <strong>Chrome extension (fastest)</strong>
           </span>
-          <span className="text-xs font-medium text-neutral-700">
-            Install <code className="neo-border bg-white px-1">extension/</code> folder → open LinkedIn job → click
+          <span className="text-xs font-medium text-muted">
+            Install <code className="neo-border bg-surface px-1">extension/</code> folder → open LinkedIn job → click
             &quot;Save to CareerFlow&quot;
           </span>
         </li>

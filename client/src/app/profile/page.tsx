@@ -58,7 +58,7 @@ export default function ProfilePage() {
 
       <Card className="max-w-xl space-y-4 bg-[var(--color-cyan)]">
         <div className="flex items-center gap-4">
-          <div className="neo-border neo-shadow-sm relative h-20 w-20 overflow-hidden bg-white">
+          <div className="neo-border neo-shadow-sm relative h-20 w-20 overflow-hidden bg-surface">
             {user?.avatarUrl ? (
               <Image src={user.avatarUrl} alt="Avatar" fill className="object-cover" />
             ) : (
@@ -75,15 +75,15 @@ export default function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div><Label>First Name</Label><Input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="mt-2 bg-white" /></div>
-          <div><Label>Last Name</Label><Input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="mt-2 bg-white" /></div>
+          <div><Label>First Name</Label><Input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="mt-2" /></div>
+          <div><Label>Last Name</Label><Input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="mt-2" /></div>
         </div>
-        <div><Label>Email</Label><Input value={user?.email ?? ""} disabled className="mt-2 bg-neutral-200" /></div>
-        <div><Label>Phone *</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required className="mt-2 bg-white" /></div>
-        <div><Label>LinkedIn *</Label><Input value={form.linkedinUrl} onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })} required className="mt-2 bg-white" /></div>
-        <div><Label>GitHub *</Label><Input value={form.githubUrl} onChange={(e) => setForm({ ...form, githubUrl: e.target.value })} required className="mt-2 bg-white" /></div>
-        <div><Label>Headline</Label><Input value={form.headline} onChange={(e) => setForm({ ...form, headline: e.target.value })} className="mt-2 bg-white" /></div>
-        <div><Label>Location</Label><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="mt-2 bg-white" /></div>
+        <div><Label>Email</Label><Input value={user?.email ?? ""} disabled className="mt-2 bg-disabled" /></div>
+        <div><Label>Phone *</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required className="mt-2" /></div>
+        <div><Label>LinkedIn *</Label><Input value={form.linkedinUrl} onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })} required className="mt-2" /></div>
+        <div><Label>GitHub *</Label><Input value={form.githubUrl} onChange={(e) => setForm({ ...form, githubUrl: e.target.value })} required className="mt-2" /></div>
+        <div><Label>Headline</Label><Input value={form.headline} onChange={(e) => setForm({ ...form, headline: e.target.value })} className="mt-2" /></div>
+        <div><Label>Location</Label><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="mt-2" /></div>
         <Button variant="lime" onClick={save} disabled={saving}>
           {saving ? "Saving..." : "Save Profile →"}
         </Button>

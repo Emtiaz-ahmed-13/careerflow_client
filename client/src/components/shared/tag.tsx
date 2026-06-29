@@ -41,7 +41,7 @@ export function StatusTag({ status }: { status: string }) {
   const v = map[status] ?? "orange";
   if (v === ("cyan" as keyof typeof variants)) {
     return (
-      <span className="neo-border inline-block rounded bg-[var(--color-cyan)] px-2 py-0.5 text-[10px] font-black uppercase shadow-[2px_2px_0_0_#000]">
+      <span className="neo-border inline-block rounded bg-[var(--color-cyan)] px-2 py-0.5 text-[10px] font-black uppercase neo-shadow-xs">
         {status}
       </span>
     );

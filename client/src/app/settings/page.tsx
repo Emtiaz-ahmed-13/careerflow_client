@@ -76,9 +76,9 @@ export default function SettingsPage() {
           One-click import from LinkedIn to Goal Session. Install the unpacked extension from the repo:
         </p>
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm font-bold">
-          <li>Chrome → <code className="neo-border bg-white px-1">chrome://extensions</code></li>
+          <li>Chrome → <code className="neo-border bg-surface px-1">chrome://extensions</code></li>
           <li>Developer mode ON → Load unpacked</li>
-          <li>Select folder: <code className="neo-border bg-white px-1">careerflow/extension</code></li>
+          <li>Select folder: <code className="neo-border bg-surface px-1">careerflow/extension</code></li>
           <li>Open LinkedIn job → click <strong>Save to CareerFlow</strong></li>
         </ol>
         <a
@@ -98,12 +98,12 @@ export default function SettingsPage() {
         <div className="mt-6 space-y-4">
           <div>
             <Label>Email format &amp; tone</Label>
-            <p className="mt-1 text-xs text-neutral-600">{EMAIL_STYLE_EXAMPLE}</p>
+            <p className="mt-1 text-xs text-muted">{EMAIL_STYLE_EXAMPLE}</p>
             <Textarea
               value={emailStyle}
               onChange={(e) => setEmailStyle(e.target.value)}
               placeholder="Describe how you want application emails written..."
-              className="mt-2 min-h-[140px] bg-white text-sm"
+              className="mt-2 min-h-[140px] bg-surface text-sm"
             />
           </div>
           <Button variant="lime" onClick={saveWritingStyle} disabled={saving}>
@@ -138,7 +138,7 @@ function InsightList({ title, items, tag }: { title: string; items: string[]; ta
       <ul className="mt-2 flex flex-wrap gap-2">
         {(items ?? []).map((item, i) =>
           tag === "cyan" ? (
-            <span key={i} className="neo-border inline-block bg-[var(--color-cyan)] px-2 py-0.5 text-[10px] font-black uppercase shadow-[2px_2px_0_0_#000]">
+            <span key={i} className="neo-border inline-block bg-[var(--color-cyan)] px-2 py-0.5 text-[10px] font-black uppercase neo-shadow-xs">
               {item}
             </span>
           ) : (

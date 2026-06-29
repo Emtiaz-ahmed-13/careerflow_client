@@ -59,9 +59,9 @@ export default function InterviewPrepPage() {
         </div>
         <div className="space-y-3">
           {questions.map((q, i) => (
-            <Card key={i} className="bg-white">
+            <Card key={i} className="bg-surface">
               <p className="neo-heading text-sm leading-snug">{i + 1}. {q.question}</p>
-              <p className="mt-2 text-sm font-medium text-neutral-700">Tip: {q.tip}</p>
+              <p className="mt-2 text-sm font-medium text-muted">Tip: {q.tip}</p>
               <Tag variant={DIFFICULTY_TAG[q.difficulty] ?? "yellow"} className="mt-3">
                 {q.difficulty}
               </Tag>

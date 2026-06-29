@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Moon, Sun } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
+import { useTheme } from "@/providers/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Card } from "@/components/ui/input";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,7 +30,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f3f3f3] p-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-app p-4">
+      <Button
+        variant="white"
+        size="sm"
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        className="absolute right-4 top-4"
+      >
+        {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      </Button>
       <Card className="w-full max-w-md bg-[var(--color-cyan)]">
         <div className="mb-2 flex items-center gap-2">
           <span className="neo-heading text-2xl">Login</span>
@@ -36,11 +48,11 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
             <Label>Email</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-2 bg-white" />
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-2" />
           </div>
           <div>
             <Label>Password</Label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="mt-2 bg-white" />
+            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="mt-2" />
           </div>
           {error && <p className="neo-border bg-[var(--color-pink)] px-3 py-2 text-sm font-bold">{error}</p>}
           <Button type="submit" variant="lime" className="w-full" disabled={loading}>

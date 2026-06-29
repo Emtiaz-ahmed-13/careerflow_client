@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
+import { useTheme } from "@/providers/theme-provider";
+import { Moon, Sun } from "lucide-react";
 
 const FEATURES = [
   {
@@ -78,12 +80,13 @@ const STEPS = [
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const displayName = user ? `${user.firstName} ${user.lastName}`.trim() || user.email : "";
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3]">
+    <div className="min-h-screen bg-[var(--color-bg)]">
       {/* Navbar */}
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b-[3px] border-black bg-[#f3f3f3] px-6 py-4 md:px-8">
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b-[3px] border-[var(--color-border)] bg-[var(--color-bg)] px-6 py-4 md:px-8">
         <Link href="/" className="flex items-center gap-2">
           <span className="neo-heading text-2xl">CareerFlow</span>
           <span className="neo-border neo-shadow-sm bg-[var(--color-yellow)] px-2 py-0.5 text-xs font-black uppercase">
@@ -92,12 +95,15 @@ export default function LandingPage() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <Button variant="white" size="sm" onClick={toggleTheme} aria-label="Toggle theme">
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           {loading ? (
-            <div className="h-9 w-24 animate-pulse neo-border bg-neutral-200" />
+            <div className="h-9 w-24 animate-pulse neo-border bg-inset" />
           ) : user ? (
             <Link href="/dashboard">
               <Button variant="lime" className="gap-2">
-                <span className="flex h-6 w-6 items-center justify-center neo-border bg-white text-xs font-black uppercase">
+                <span className="flex h-6 w-6 items-center justify-center neo-border bg-[var(--color-card)] text-xs font-black uppercase">
                   {(user.firstName?.[0] ?? user.email[0]).toUpperCase()}
                 </span>
                 <span className="max-w-[140px] truncate">{displayName}</span>
@@ -126,7 +132,7 @@ export default function LandingPage() {
           <br />
           one apply at a time.
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg font-medium text-neutral-700">
+        <p className="mx-auto mt-6 max-w-2xl text-lg font-medium text-muted">
           Paste a LinkedIn job, get an instant AI match score, generate tailored cover
           letters & emails, and track every application on a Kanban board — all while
           keeping your daily streak alive.
@@ -165,7 +171,7 @@ export default function LandingPage() {
             const Icon = f.icon;
             return (
               <div key={f.title} className={`neo-card p-6 ${f.color}`}>
-                <span className="neo-border neo-shadow-sm inline-flex h-11 w-11 items-center justify-center bg-white">
+                <span className="neo-border neo-shadow-sm inline-flex h-11 w-11 items-center justify-center bg-[var(--color-card)]">
                   <Icon className="h-5 w-5" strokeWidth={2.5} />
                 </span>
                 <h3 className="neo-heading mt-4 text-lg">{f.title}</h3>
@@ -183,10 +189,10 @@ export default function LandingPage() {
         </h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
           {STEPS.map((s) => (
-            <div key={s.n} className="neo-card bg-white p-6">
-              <span className="neo-heading text-3xl text-neutral-300">{s.n}</span>
+            <div key={s.n} className="neo-card bg-[var(--color-card)] p-6">
+              <span className="neo-heading text-3xl text-faint">{s.n}</span>
               <h3 className="neo-heading mt-2 text-lg">{s.title}</h3>
-              <p className="mt-2 text-sm font-medium text-neutral-700">{s.desc}</p>
+              <p className="mt-2 text-sm font-medium text-muted">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -221,9 +227,9 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t-[3px] border-black px-6 py-6 md:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-sm font-medium text-neutral-700 md:flex-row">
-          <span className="neo-heading text-lg text-black">CareerFlow</span>
+      <footer className="border-t-[3px] border-[var(--color-border)] px-6 py-6 md:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-sm font-medium text-[var(--color-muted)] md:flex-row">
+          <span className="neo-heading text-lg text-[var(--color-foreground)]">CareerFlow</span>
           <span>© {new Date().getFullYear()} CareerFlow — AI Job Application Tracker</span>
         </div>
       </footer>
